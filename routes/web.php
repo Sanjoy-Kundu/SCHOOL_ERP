@@ -1,8 +1,34 @@
 <?php
 
+use App\Http\Controllers\Web\AuthController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
+
+
+
+
+// Guest routes (Only accessible if not logged in)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+});
+
+
+// Protected routes (Only accessible if logged in)
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    //Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+
+
+
+
+
+
+
+
+
 
 // Temporary developer route to auto-login and set local storage token
 Route::get('/', function () {
