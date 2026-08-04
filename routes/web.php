@@ -1,24 +1,55 @@
 <?php
-
 use App\Http\Controllers\Web\AuthController;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\EmailVerificationController;
+use App\Http\Controllers\Web\ForgotPasswordController;
+use App\Mail\VerificationMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 
 
 
 
-// Guest routes (Only accessible if not logged in)
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+
+/*------------------------------------------------------
+1. GUEST AUTH ROUTES (Only for non-logged-in users)
+----------------------------------------------------------*/
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 });
 
 
-// Protected routes (Only accessible if logged in)
-Route::middleware('auth')->group(function () {
+
+/*------------------------------------------------------
+2. EMAIL VERIFICATION PROCESS
+----------------------------------------------------------*/
+Route::get('/email/verify', [EmailVerificationController::class, 'emailVerifyForm'])->middleware('auth')->name('verification.notice');
+Route::get('/custom/verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware(['signed'])->name('custom.verification.verify');
+
+
+
+/*------------------------------------------------------
+3. EMAIL VERIFICATION PROCESS
+----------------------------------------------------------*/
+Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    //Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::post('/email/verification-notification', function (Illuminate\Http\Request $request) {
+        Mail::to($request->user()->email)->send(new VerificationMail($request->user()));
+        return response()->json([
+            'status' => true,
+            'message' => 'Verification link resent!',
+        ]);
+    })
+        ->middleware(['throttle:6,1'])
+        ->name('verification.send');
 });
 
 
@@ -26,51 +57,11 @@ Route::middleware('auth')->group(function () {
 
 
 
-
-
-
-
-// Temporary developer route to auto-login and set local storage token
-Route::get('/', function () {
-    // Fetch the first user (seeded Admin) from the database using Eloquent ORM
-    $user = User::first();
-
-    if ($user) {
-        // Programmatically login the user into the Laravel session
-        Auth::login($user);
-
-        // Inject the auth_token into client localStorage to satisfy the JS Route Guard
-        return response("
-            <script>
-                localStorage.setItem('auth_token', 'dummy_developer_token');
-                window.location.href = '/dashboard';
-            </script>
-        ");
-    }
-
-    // Fallback message if seeders have not been run yet
-    return "Database is empty! Please run this command in terminal first: php artisan db:seed";
+/*------------------------------------------------------
+4. EMAIL VERIFICATION PROCESS
+----------------------------------------------------------*/
+Route::middleware(['auth', 'verified'])->group(function () {
+  Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-// Main dashboard route protected by Laravel auth middleware
-Route::get('/dashboard', function () {
-    // Retrieve the authenticated user with their loaded relationships
-    $user = Auth::user();
-    
-    // Static dummy dataset for Class 6 - 10 school ERP metrics
-    $data = [
-        'total_students' => 845,
-        'total_teachers' => 32
-    ];
 
-    // Load the correct view page (pages.dashboardPage) as configured in your structure
-    return view('pages.dashboardPage', compact('user', 'data'));
-})->name('dashboard')->middleware('auth');
-
-// Dynamic Auth Post routes
-Route::post('/logout', function() {
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect('/');
-})->name('logout');

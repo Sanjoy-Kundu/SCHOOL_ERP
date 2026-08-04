@@ -21,15 +21,23 @@ class AuthController extends Controller
     }
 
 
-    /**
-     * Safely destroy session and logout the user from the web guard.
-     */
+    // LOGOUT PROCESS
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        
-        return redirect()->route('login');
+        try {
+            $user = Auth::user();
+            if ($user) {
+                $user->tokens()->delete();
+            }
+
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect('/login');
+        } catch(Exception $ex) {
+            // Fallback to safety in case of any database exception
+            return redirect('/login');
+        }
     }
 }
