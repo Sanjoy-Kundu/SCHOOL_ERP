@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+       // Implicitly grant 'admin' role all gate permissions (Best Practice)
+        Gate::before(function (User $user, string $ability) {
+            if ($user->role && $user->role->slug === 'admin') {
+                return true;
+            }
+        });
     }
 }

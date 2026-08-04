@@ -41,11 +41,12 @@
         <li><hr class="border-white border-opacity-10 my-2"></li>
 
         <!-- MODULE 2: ACADEMIC MANAGEMENT (Admins & Teachers Only) -->
-        @canany(['academic.classes', 'academic.subjects', 'academic.routines'])
+        {{-- @canany(['academic.classes', 'academic.subjects', 'academic.routines']) --}}
             <li>
                 <a href="#academicSubCollapse" 
                    class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('academic*') ? 'active-group' : '' }}"
                    data-bs-toggle="collapse" 
+                   data-bs-target="#academicSubCollapse"
                    role="button"
                    aria-expanded="{{ request()->is('academic*') ? 'true' : 'false' }}">
                     <div>
@@ -74,14 +75,15 @@
                     </ul>
                 </div>
             </li>
-        @endcanany
+        {{-- @endcanany --}}
 
         <!-- MODULE 3: STUDENT REGISTRY -->
-        @canany(['students.view', 'students.create'])
+        {{-- @canany(['students.view', 'students.create']) --}}
             <li>
                 <a href="#studentCollapse" 
                    class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('students*') ? 'active-group' : '' }}"
                    data-bs-toggle="collapse" 
+                   data-bs-target="#studentCollapse"
                    role="button"
                    aria-expanded="{{ request()->is('students*') ? 'true' : 'false' }}">
                     <div>
@@ -105,14 +107,15 @@
                     </ul>
                 </div>
             </li>
-        @endcanany
+        {{-- @endcanany --}}
 
         <!-- MODULE 4: EXAMINATION & MARKINGS -->
-        @canany(['exams.view', 'exams.results'])
+        {{-- @canany(['exams.view', 'exams.results']) --}}
             <li>
                 <a href="#examCollapse" 
                    class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('exams*') ? 'active-group' : '' }}"
                    data-bs-toggle="collapse" 
+                   data-bs-target="#examCollapse"
                    role="button"
                    aria-expanded="{{ request()->is('exams*') ? 'true' : 'false' }}">
                     <div>
@@ -136,14 +139,15 @@
                     </ul>
                 </div>
             </li>
-        @endcanany
+        {{-- @endcanany --}}
 
         <!-- MODULE 5: ATTENDANCE & TRACKING -->
-        @canany(['attendance.view', 'attendance.take'])
+        {{-- @canany(['attendance.view', 'attendance.take']) --}}
             <li>
                 <a href="#attendanceCollapse" 
                    class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('attendance*') ? 'active-group' : '' }}"
                    data-bs-toggle="collapse" 
+                   data-bs-target="#attendanceCollapse"
                    role="button"
                    aria-expanded="{{ request()->is('attendance*') ? 'true' : 'false' }}">
                     <div>
@@ -167,14 +171,15 @@
                     </ul>
                 </div>
             </li>
-        @endcanany
+        {{-- @endcanany --}}
 
         <!-- MODULE 6: ACCOUNTS & FEES -->
-        @canany(['accounts.fees', 'accounts.expenses'])
+        {{-- @canany(['accounts.fees', 'accounts.expenses']) --}}
             <li>
                 <a href="#accountsCollapse" 
                    class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('accounts*') ? 'active-group' : '' }}"
                    data-bs-toggle="collapse" 
+                   data-bs-target="#accountsCollapse"
                    role="button"
                    aria-expanded="{{ request()->is('accounts*') ? 'true' : 'false' }}">
                     <div>
@@ -198,7 +203,7 @@
                     </ul>
                 </div>
             </li>
-        @endcanany
+        {{-- @endcanany --}}
     </ul>
 
     <!-- Footer Profile Block Inside Sidebar -->

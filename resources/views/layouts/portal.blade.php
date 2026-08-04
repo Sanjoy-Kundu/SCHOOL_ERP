@@ -43,11 +43,13 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    /* Sidebar menu list override to remove default bullets */
+    /* Sidebar menu layout spacing and vertical flow rules */
     .sidebar-menu {
         list-style: none !important;
         padding: 1rem 0.75rem !important;
         margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important; /* Forces items vertically item-by-item */
         flex-grow: 1;
         overflow-y: auto; 
     }
@@ -224,6 +226,12 @@
 
 @push('scripts')
 <script>
+    // Global Theme Switcher (Declared in window scope to make it resilient to page-level JS errors)
+    window.changeTheme = function(themeName) {
+        document.documentElement.setAttribute('data-theme', themeName);
+        localStorage.setItem('dashboard_theme', themeName);
+    };
+
     // Responsive sidebar trigger script
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');

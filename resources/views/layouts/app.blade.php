@@ -8,25 +8,22 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Title with dynamic yield -->
-    <title>@yield('title', config('app.name', 'Scool Erp'))</title>
+    <title>@yield('title', config('app.name', 'School ERP'))</title>
     
     <!-- Fonts for Bengali & English -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Vendor CSS Frameworks (Updated Paths) -->
+    <!-- Vendor CSS Frameworks -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
     <!-- Custom Layout & Dynamic Colors Theme Stylesheet -->
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
     
-    <!-- Core Vendor Scripts (Loaded early for DataTables/Charts inside views) -->
+    <!-- Core jQuery Utility (Must be loaded first in head) -->
     <script src="{{ asset('assets/vendor/jquery/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ asset('assets/vendor/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('assets/vendor/datatables/dataTables.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('assets/vendor/chartjs/chart.umd.js') }}"></script>
     
     @stack('styles')
 
@@ -75,8 +72,16 @@
 
     @yield('content')
 
-    <!-- ==================== LOCAL JS LIBRARIES (Updated Paths) ==================== -->
+    <!-- ==================== LOCAL JS LIBRARIES (Ordered Correctly) ==================== -->
+    <!-- 1. Bootstrap must be loaded first before Datatables -->
     <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    
+    <!-- 2. Now load Datatables and Charts with Correct Vendor Paths -->
+    <script src="{{ asset('assets/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/datatables/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/vendor/chartjs/chart.umd.js') }}"></script>
+    
+    <!-- 3. Load Axios, SweetAlert2 and App JS -->
     <script src="{{ asset('assets/vendor/axios/axios.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
