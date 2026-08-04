@@ -1,0 +1,60 @@
+/* ==================== DYNAMIC MULTI-THEME ROOT VARIABLES ==================== */
+:root, [data-theme="default"] {
+    --primary-color: #0d6efd; /* Blue Theme */
+    --primary-hover: #0b5ed7;
+    --sidebar-bg: #1e293b;
+    --sidebar-text: #94a3b8;
+    --sidebar-text-active: #ffffff;
+}
+
+[data-theme="green"] {
+    --primary-color: #198754; /* Green Theme */
+    --primary-hover: #157347;
+    --sidebar-bg: #0f291e;
+    --sidebar-text: #a3bfa8;
+    --sidebar-text-active: #ffffff;
+}
+
+[data-theme="purple"] {
+    --primary-color: #6f42c1; /* Purple Theme */
+    --primary-hover: #59359a;
+    --sidebar-bg: #2d1b4e;
+    --sidebar-text: #bfadd4;
+    --sidebar-text-active: #ffffff;
+}
+
+[data-theme="dark"] {
+    --primary-color: #495057; /* Dark Theme */
+    --primary-hover: #343a40;
+    --sidebar-bg: #0f172a;
+    --sidebar-text: #cbd5e1;
+    --sidebar-text-active: #38bdf8;
+}
+
+/* ==================== BASIC SIDEBAR STYLING ==================== */
+.sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    transition: all 0.3s ease-in-out;
+}
+
+.sidebar .nav-link {
+    color: var(--sidebar-text);
+    font-weight: 500;
+}
+
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+    color: var(--sidebar-text-active);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.theme-selector-btn {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #fff;
+    display: inline-block;
+}
