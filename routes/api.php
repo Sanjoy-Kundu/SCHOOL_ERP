@@ -33,38 +33,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/details', [AuthController::class, 'details'])->name('api.auth.details');
 });
 
-
-
-
-
-
-
-
-
-
-
-
-// // Protected API routes using Laravel Sanctum middleware
-// Route::middleware('auth')->group(function () {
-//     Route::get('/auth/details', [AuthController::class, 'details']);
-// });
-
-
-// Route::middleware('web')->group(function () {
-// /* ----------------------------------------
-//     PUBLIC AUTH ROUTES
-// -------------------------------------------*/
-
-// Route::post('/auth/login', [AuthController::class, 'store'])->name('api.auth.login');
-// Route::get('/auth/details', [AuthController::class, 'details'])->name('api.auth.details');
-// Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('api.password.email');
-// Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('api.password.update');
-
-
-
-
-//   });
-
-
-
-
