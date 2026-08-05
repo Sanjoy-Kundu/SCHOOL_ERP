@@ -19,7 +19,7 @@
         align-items: center;
     }
 
-    /* responsive sizing rules for premium layout consistency */
+    /* Responsive sizing rules for premium layout consistency */
     @media (max-width: 575.98px) {
         .card-responsive { border-radius: 16px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important; }
         .container-responsive { padding-left: 12px !important; padding-right: 12px !important; }
@@ -106,8 +106,9 @@
                             <div class="input-group">
                                 <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-envelope"></i></span>
                                 <input type="email" class="form-control form-control-lg rounded-end-3 form-control-academic fs-6" id="email" name="email" placeholder="আপনার ইমেইল এড্রেস" required>
-                                <div class="invalid-feedback" id="error-email"></div>
                             </div>
+                            <!-- Stable Error Container outside Input Group to keep perfect corner radius -->
+                            <div class="text-danger small d-none mt-1" id="error-email"></div>
                         </div>
 
                         <div class="mt-4">
@@ -141,19 +142,49 @@
 
 @push('scripts')
 <script>
+// Prevent caching issues (BFCache Back-Button Loader bug) [1]
+window.addEventListener('pageshow', function (event) {
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'রিসেট লিংক পাঠান (Send Reset Link)';
+    }
+});
+
+// Dynamic Ajax-based Axios Forgot Password Submission
 document.getElementById('forgotPasswordForm').addEventListener('submit', async function (e) {
     e.preventDefault();
     
+    const emailInput = document.getElementById('email');
+    const emailErr = document.getElementById('error-email');
     const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>পাঠানো হচ্ছে...';
     
     // Clear previous dynamic validation errors
-    document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-    document.querySelectorAll('.invalid-feedback').forEach(el => el.innerHTML = '');
+    emailInput.classList.remove('is-invalid');
+    emailErr.classList.add('d-none');
+    emailErr.innerHTML = '';
+
+    const emailValue = emailInput.value.trim();
+
+    // 1. Client-Side Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailValue) {
+        emailInput.classList.add('is-invalid');
+        emailErr.classList.remove('d-none');
+        emailErr.innerHTML = 'Please enter your email address.';
+        return false;
+    } else if (!emailRegex.test(emailValue)) {
+        emailInput.classList.add('is-invalid');
+        emailErr.classList.remove('d-none');
+        emailErr.innerHTML = 'Please provide a valid email format (e.g. user@school.com).';
+        return false;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>পাঠানো হচ্ছে...';
 
     const formData = {
-        email: document.getElementById('email').value
+        email: emailValue
     };
 
     try {
@@ -161,13 +192,16 @@ document.getElementById('forgotPasswordForm').addEventListener('submit', async f
         let res = await axios.post('/api/forgot-password', formData);
         
         if (res.data.status === true || res.status === 200) {
+            // SECURITY: Instantly clear out any stale local tokens before redirecting
+            localStorage.removeItem('auth_token');
+
             Swal.fire({
                 icon: 'success',
                 title: 'সফল হয়েছে!',
                 text: res.data.message || 'আপনার ইমেইলে পাসওয়ার্ড রিসেট লিংক পাঠানো হয়েছে।',
                 confirmButtonColor: '#004d40',
                 willClose: () => {
-                    // Redirect back to login screen
+                    // Redirect back to login screen cleanly
                     window.location.href = '/login';
                 }
             });
@@ -180,13 +214,12 @@ document.getElementById('forgotPasswordForm').addEventListener('submit', async f
             const errors = error.response.data.errors;
             const message = error.response.data.message;
 
-            // Handle inline validation errors for email field
+            // Handle server-side validation errors for email field
             if (errors && errors.email) {
-                const emailInput = document.getElementById('email');
                 emailInput.classList.add('is-invalid');
-                const feedback = document.getElementById('error-email');
-                if (feedback) {
-                    feedback.innerHTML = errors.email[0];
+                if (emailErr) {
+                    emailErr.classList.remove('d-none');
+                    emailErr.innerHTML = errors.email[0];
                 }
             }
 

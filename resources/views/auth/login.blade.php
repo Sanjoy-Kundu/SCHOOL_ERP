@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
-@section('title', config('app.name', 'School ERP') . ' || Portal Log In')
-
+@section('title', config('app.name', 'School ERP') . ' || Login Portal')
 @push('styles')
 <style>
     /* Premium Academic Theme Colors */
@@ -177,6 +176,7 @@
 </div>
 @endsection
 
+
 @push('scripts')
 <script>
 // Prevent caching issues (BFCache Back-Button Loader bug) and auto-redirect already logged-in users [1]
@@ -186,11 +186,6 @@ window.addEventListener('pageshow', function (event) {
         // Reset the sign-in button state to active
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'পোর্টালে প্রবেশ করুন (Sign In)';
-    }
-
-    // Auto-redirect to dashboard if token already exists in localStorage
-    if (localStorage.getItem('auth_token')) {
-        window.location.href = '/dashboard';
     }
 });
 

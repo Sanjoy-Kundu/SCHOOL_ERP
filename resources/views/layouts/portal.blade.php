@@ -233,11 +233,11 @@
     };
 
     /**
-     * Fetch authenticated user details from Sanctum API (Simplified by global app.js)
+     * Fetch authenticated user details from Sanctum API
      */
     async function authDetails() {
         try {
-            // Send secure asynchronous GET request to retrieve dynamic profile details
+            // Retrieve dynamic details safely
             const res = await axios.get('/api/auth/details');
 
             if (res.data.status === true) {
@@ -257,12 +257,32 @@
                 }
             }
         } catch (error) {
-            console.warn('API details endpoint offline. Reverting to safe layout fallbacks.');
+            console.warn('API details endpoint offline or token invalid.');
+            
+            // CRITICAL SECURE GUARD: If API returns 401 (Session Expired/Revoked), clear token and sign out natively
+            if (error.response && error.response.status === 401) {
+                localStorage.removeItem('auth_token');
+                
+                // Perform a clean stateful logout to destroy web session cookies
+                const csrfMeta = document.head.querySelector('meta[name="csrf-token"]');
+                const csrfToken = csrfMeta ? csrfMeta.content : '';
+                
+                fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }).finally(() => {
+                    window.location.href = '/login';
+                });
+                return;
+            }
             
             // Safe fallback details to prevent layout distortion on failure
             $('.userNameSidebarDB').text('Super Admin');
             $('.userEmailSidebarDB').text('admin@school.com');
-            $('.userRoleSidebarDB').text('Admin');
+            $('.userRoleSidebarDB').text('Admin');           
         }
     }
 

@@ -37,8 +37,12 @@
     <!-- ==================== GLOBAL ROUTE GUARD ==================== -->
     <script>
         (function() {
-            // Read authentication token and user preferences from local storage
-            const token = localStorage.getItem('auth_token');
+            // Read authentication token and user preferences safely
+            const rawToken = localStorage.getItem('auth_token');
+            
+            // CRITICAL FIX: Sanitize the token string to filter out corrupt 'undefined' or 'null' values
+            const token = (rawToken && rawToken !== 'undefined' && rawToken !== 'null') ? rawToken : null;
+            
             const theme = localStorage.getItem('dashboard_theme') || 'default';
             const currentPath = window.location.pathname;
 
@@ -61,6 +65,8 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 }).finally(() => {
+                    // Safe cleanup of corrupt tokens locally before redirecting
+                    localStorage.removeItem('auth_token');
                     // Redirect to login after the session cookie is destroyed on the server
                     window.location.href = "/login";
                 });
