@@ -77,7 +77,7 @@
                 <ul class="list-unstyled ps-4">
                     <!-- 1. Academic Sessions (e.g., Year 2020-2030 setup) -->
                     <li>
-                        <a href="#" class="submenu-link">
+                        <a href="{{url('/academic-session')}}" class="submenu-link">
                             <i class="fa-solid fa-calendar-check me-2"></i>Academic Sessions
                         </a>
                     </li>

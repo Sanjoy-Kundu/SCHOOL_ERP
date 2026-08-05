@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\Web\Academic\AcademicController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\ChangePasswordController;
 use App\Http\Controllers\Web\DashboardController;
@@ -62,8 +64,16 @@ Route::middleware(['auth'])->group(function () {
 4. EMAIL VERIFICATION PROCESS
 ----------------------------------------------------------*/
 Route::middleware(['auth', 'verified'])->group(function () {
-  Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-  Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
+   Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+   Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
+
+   /**
+   * ----------------------------------------------------------
+   * ACADEMIC PROCESSIONG
+   * ----------------------------------------------------------
+   */
+  Route::get('/academic-session',[AcademicController::class, 'academicSession'])->name('academic-session');
+
 });
 
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Academic\AcademicSessionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChangePasswordController;
 use App\Http\Controllers\Api\ForgotPasswordController;
@@ -33,5 +34,19 @@ Route::middleware('auth:sanctum')->group(function () {
     // Shared route endpoint for profile details (Cleaned duplicates)
     Route::get('/auth/details', [AuthController::class, 'details'])->name('api.auth.details');
     Route::post('/auth/change-password', [ChangePasswordController::class, 'changePassword'])->name('api.auth.change-password');
+
+
+
+    /*-------------------------------
+    Academic Session Management ->middleware('permission:academic_sessions.view') ->middleware('permission:academic_sessions.create') ->middleware('permission:academic_sessions.view') ->middleware('permission:academic_sessions.edit') ->middleware('permission:academic_sessions.delete') ->middleware('permission:academic_sessions.edit')
+    --------------------------------*/
+    Route::controller(AcademicSessionController::class)->group(function () {
+        Route::get('/academic-session-lists', 'index')->name('api.academic_sessions.index');
+        Route::post('/academic-session-store', 'store')->name('api.academic_sessions.store');
+        Route::get('/academic-session-details/{id}', 'show')->name('api.academic_sessions.show');
+        Route::post('/academic-session-update/{id}', 'update')->name('api.academic_sessions.update');
+        Route::delete('/academic-session-delte/{id}', 'destroy')->name('api.academic_sessions.destroy');
+        Route::patch('/academic-session-set-active/{id}', 'setActive')->name('api.academic_sessions.set_active');
+    });
 });
 
