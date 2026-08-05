@@ -26,11 +26,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_image'
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-    */
     protected $hidden = [
         'password',
         'remember_token',
@@ -44,22 +39,24 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    //RELATIONSHIPS WITH ROLE
+    /**
+     * Relationship: A User belongs to a dynamic Role.
+     */
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
 
-
-
     /**
-     * Check if the user has a specific permission.
+     * Check if the user has a specific permission dynamically (Fixed Bug).
      */
     public function hasPermission(string $permission): bool
     {
-        // Check permission through roles and permissions relationship
-        return $this->roles()->whereHas('permissions', function ($query) use ($permission) {
-            $query->where('name', $permission);
-        })->exists();
+        if (!$this->role) {
+            return false;
+        }
+
+        // Checks permission relationship using the belongsTo role structure on 'slug' column
+        return $this->role->permissions()->where('slug', $permission)->exists();
     }
 }

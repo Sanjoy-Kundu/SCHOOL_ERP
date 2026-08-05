@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Exception;
 
-class AuthApiController extends Controller
+class AuthController extends Controller
 {
     /**
      * Handle API login requests supporting Email, Username, or Phone login with try-catch.

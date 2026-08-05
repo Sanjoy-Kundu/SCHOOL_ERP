@@ -232,6 +232,40 @@
         localStorage.setItem('dashboard_theme', themeName);
     };
 
+    /**
+     * Fetch authenticated user details from Sanctum API (Simplified by global app.js)
+     */
+    async function authDetails() {
+        try {
+            // Send secure asynchronous GET request to retrieve dynamic profile details
+            const res = await axios.get('/api/auth/details');
+
+            if (res.data.status === true) {
+                const user = res.data.data;
+                const userName = user?.name ?? 'No Name';
+                const userEmail = user?.email ?? 'No Email';
+                const userRole = user?.role?.name ?? 'No Role';
+
+                // Dynamically bind info to navbar and sidebar classes globally
+                $('.userNameSidebarDB').text(userName);
+                $('.userEmailSidebarDB').text(userEmail);
+                $('.userRoleSidebarDB').text(userRole);
+
+                // If user's email is unverified, reveal the global alert banner
+                if (user && user.email_verified_at === null) {
+                    $('#emailVerificationBanner').removeClass('d-none');
+                }
+            }
+        } catch (error) {
+            console.warn('API details endpoint offline. Reverting to safe layout fallbacks.');
+            
+            // Safe fallback details to prevent layout distortion on failure
+            $('.userNameSidebarDB').text('Super Admin');
+            $('.userEmailSidebarDB').text('admin@school.com');
+            $('.userRoleSidebarDB').text('Admin');
+        }
+    }
+
     // Responsive sidebar trigger script
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
@@ -254,5 +288,56 @@
             overlay.classList.remove('active');
         });
     }
+
+    // Safely execute API retrieval as soon as the DOM is completely ready
+    $(document).ready(function() {
+        authDetails();
+
+        // ==================== GLOBAL LOGOUT SWAL INTERCEPTOR ====================
+        // Intercepts ANY form submission that targets the "/logout" route (Navbar & Sidebar)
+        $('form[action*="/logout"]').on('submit', function(e) {
+            const form = this; // Capture reference to the submitted form
+            
+            // If the user has already confirmed, bypass the SweetAlert loop and submit naturally
+            if ($(form).data('confirmed')) {
+                return true;
+            }
+
+            // Prevent immediate form submission to render SweetAlert dialog box first
+            e.preventDefault(); 
+
+            // Trigger premium academic-themed SweetAlert2 confirmation dialog
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You will be logged out of your portal session!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#004d40', // Royal green color matching our theme
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Log Out',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // 1. Instantly wipe the frontend auth token from client localStorage
+                        localStorage.removeItem('auth_token');
+
+                        // 2. Set confirmed flag to true to bypass interceptor on next trigger
+                        $(form).data('confirmed', true);
+
+                        // 3. Programmatically submit the form to clear server-side sessional state
+                        form.submit();
+                    }
+                });
+            } else {
+                // Native fallback dialog in case SweetAlert library fails to load
+                if (confirm('Are you sure you want to log out?')) {
+                    localStorage.removeItem('auth_token');
+                    $(form).data('confirmed', true);
+                    form.submit();
+                }
+            }
+        });
+    });
 </script>
 @endpush
