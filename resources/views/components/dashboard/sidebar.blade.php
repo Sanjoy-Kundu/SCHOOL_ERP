@@ -62,11 +62,11 @@
         <!-- MODULE 2: ACADEMIC -->
         <li>
             <a href="#academicCollapse" 
-               class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('academic*') ? 'active-group' : '' }}"
-               data-bs-toggle="collapse" 
-               data-bs-target="#academicCollapse"
-               role="button"
-               aria-expanded="{{ request()->is('academic*') ? 'true' : 'false' }}">
+            class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('academic*') ? 'active-group' : '' }}"
+            data-bs-toggle="collapse" 
+            data-bs-target="#academicCollapse"
+            role="button"
+            aria-expanded="{{ request()->is('academic*') ? 'true' : 'false' }}">
                 <div>
                     <i class="fa-solid fa-school me-3"></i>Academic
                 </div>
@@ -75,27 +75,42 @@
 
             <div class="collapse {{ request()->is('academic*') ? 'show' : '' }}" id="academicCollapse">
                 <ul class="list-unstyled ps-4">
+                    <!-- 1. Academic Sessions (e.g., Year 2020-2030 setup) -->
                     <li>
                         <a href="#" class="submenu-link">
                             <i class="fa-solid fa-calendar-check me-2"></i>Academic Sessions
                         </a>
                     </li>
+                    
+                    <!-- 2. Basic Classes (6-10) and Sections (A, B, C or N/A) setup -->
                     <li>
                         <a href="#" class="submenu-link">
                             <i class="fa-solid fa-layer-group me-2"></i>Classes & Sections
                         </a>
                     </li>
+                    
+                    <!-- 3. Shifts (Morning/Day/N/A) and Groups (Science/Arts/Commerce) setup -->
                     <li>
-                        <!-- BD Context: Morning/Day shift and Science/Arts/Commerce group setup -->
                         <a href="#" class="submenu-link">
                             <i class="fa-solid fa-network-wired me-2"></i>Shifts & Groups
                         </a>
                     </li>
+
+                    <!-- 4. Class Setup: Combine Class, Section, Shift & Group for dynamic configuration -->
+                    <li>
+                        <a href="#" class="submenu-link">
+                            <i class="fa-solid fa-sliders me-2"></i>Class Setup
+                        </a>
+                    </li>
+
+                    <!-- 5. Subjects assigned based on Class and Group setups -->
                     <li>
                         <a href="#" class="submenu-link">
                             <i class="fa-solid fa-book-open me-2"></i>Subjects
                         </a>
                     </li>
+                    
+                    <!-- 6. Daily schedules, periods, and teacher assignments -->
                     <li>
                         <a href="#" class="submenu-link">
                             <i class="fa-solid fa-clock me-2"></i>Class Routines
