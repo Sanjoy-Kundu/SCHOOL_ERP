@@ -6,7 +6,7 @@
 <style>
     /* Premium Academic Theme Colors */
     :root {
-        --academic-green: #004d40;      /* Traditional Bangladeshi School Green */
+        --academic-green: #004d40;      /* Traditional School Green */
         --academic-green-dark: #00251a;
         --academic-gold: #ffc107;        /* Traditional Academic Gold */
         --academic-text-muted: #6c757d;
@@ -19,7 +19,7 @@
         align-items: center;
     }
 
-    /* responsive sizing rules for premium layout consistency */
+    /* Responsive sizing rules for premium layout consistency */
     @media (max-width: 575.98px) {
         .card-responsive { border-radius: 16px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important; }
         .container-responsive { padding-left: 12px !important; padding-right: 12px !important; }
@@ -126,8 +126,9 @@
                             <div class="input-group">
                                 <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-user-tie"></i></span>
                                 <input type="text" class="form-control form-control-lg rounded-end-3 form-control-academic fs-6" id="username" name="username" placeholder="ইমেল, ইউজারনেম বা মোবাইল নম্বর" required>
-                                <div class="invalid-feedback" id="error-username"></div>
                             </div>
+                            <!-- Stable Error Container outside Input Group -->
+                            <div class="text-danger small d-none mt-1" id="error-username"></div>
                         </div>
 
                         <!-- Secure password state with visibility controller -->
@@ -140,6 +141,7 @@
                                    <i class="fa-regular fa-eye"></i>
                                 </button>
                             </div>
+                            <!-- Stable Error Container outside Input Group -->
                             <div class="text-danger small d-none mt-1" id="error-password"></div>
                         </div>
 
@@ -177,6 +179,21 @@
 
 @push('scripts')
 <script>
+// Prevent caching issues (BFCache Back-Button Loader bug) and auto-redirect already logged-in users [1]
+window.addEventListener('pageshow', function (event) {
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) {
+        // Reset the sign-in button state to active
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'পোর্টালে প্রবেশ করুন (Sign In)';
+    }
+
+    // Auto-redirect to dashboard if token already exists in localStorage
+    if (localStorage.getItem('auth_token')) {
+        window.location.href = '/dashboard';
+    }
+});
+
 // 1. Password Visibility Toggle Functionality
 const setupPasswordToggle = (inputId, buttonId) => {
     const passwordInput = document.getElementById(inputId);
@@ -216,8 +233,12 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     
     // Clear previous dynamic validation errors on submission trigger
     document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-    document.querySelectorAll('.invalid-feedback').forEach(el => el.innerHTML = '');
+    
+    const usernameErr = document.getElementById('error-username');
     const passErr = document.getElementById('error-password');
+    
+    usernameErr.classList.add('d-none');
+    usernameErr.innerHTML = '';
     passErr.classList.add('d-none');
     passErr.innerHTML = '';
 
@@ -273,13 +294,14 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             const errors = error.response.data.errors;
             const message = error.response.data.message;
 
-            // Handle server-side validation messages inline dynamically
+            // Handle server-side password validation messages inline dynamically
             if (errors && errors.password) {
                 passErr.classList.remove('d-none');
                 passErr.innerHTML = errors.password[0];
                 document.getElementById('password').classList.add('is-invalid');
             }
 
+            // Handle other server-side fields like username validation errors
             if (errors) {
                 Object.keys(errors).forEach(key => {
                     if (key !== 'password') {
@@ -288,6 +310,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
                             input.classList.add('is-invalid');
                             const feedback = document.getElementById('error-' + key);
                             if (feedback) {
+                                feedback.classList.remove('d-none'); // Show the error div
                                 feedback.innerHTML = errors[key][0];
                             }
                         }

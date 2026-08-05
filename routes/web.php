@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\ChangePasswordController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\EmailVerificationController;
 use App\Http\Controllers\Web\ForgotPasswordController;
@@ -62,6 +63,7 @@ Route::middleware(['auth'])->group(function () {
 ----------------------------------------------------------*/
 Route::middleware(['auth', 'verified'])->group(function () {
   Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+  Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
 });
 
 

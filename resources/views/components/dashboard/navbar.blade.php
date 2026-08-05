@@ -66,7 +66,7 @@
                     </a>
                 </li>
                 <li>
-                    <a class="dropdown-item py-2 px-3 text-dark small" href="#">
+                    <a class="dropdown-item py-2 px-3 text-dark small" href="{{url('/change-password')}}">
                         <i class="fa-solid fa-key me-2 text-warning" style="width: 18px; text-align: center;"></i>Change Password
                     </a>
                 </li>

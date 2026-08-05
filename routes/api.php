@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ChangePasswordController;
 use App\Http\Controllers\Api\ForgotPasswordController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,5 +32,6 @@ Route::middleware('web')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     // Shared route endpoint for profile details (Cleaned duplicates)
     Route::get('/auth/details', [AuthController::class, 'details'])->name('api.auth.details');
+    Route::post('/auth/change-password', [ChangePasswordController::class, 'changePassword'])->name('api.auth.change-password');
 });
 
