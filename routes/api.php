@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Academic\AcademicSessionController;
 use App\Http\Controllers\Api\Academic\ClassSetupController;
 use App\Http\Controllers\Api\Academic\GroupController;
+use App\Http\Controllers\Api\Academic\PaperController;
 use App\Http\Controllers\Api\Academic\SchoolClassController;
 use App\Http\Controllers\Api\Academic\SectionController;
 use App\Http\Controllers\Api\Academic\ShiftController;
@@ -139,6 +140,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/subject-details/{id}', 'show')->name('api.subjects.show');
         Route::post('/subject-update/{id}', 'update')->name('api.subjects.update');
         Route::delete('/subject-delte/{id}', 'destroy')->name('api.subjects.destroy');
+    });
+
+
+     /*--------------------------------------------------
+    Paper Master Management 
+    ->middleware('permission:subjects_papers.view') ->middleware('permission:subjects_papers.create') ->middleware('permission:subjects_papers.view') ->middleware('permission:subjects_papers.edit') ->middleware('permission:subjects_papers.delete')
+    ---------------------------------------------------*/
+    Route::controller(PaperController::class)->group(function () {
+        Route::get('/paper-lists', 'index')->name('api.papers.index');
+        Route::post('/paper-store', 'store')->name('api.papers.store');
+        Route::get('/paper-details/{id}', 'show')->name('api.papers.show');
+        Route::post('/paper-update/{id}', 'update')->name('api.papers.update');
+        Route::delete('/paper-delte/{id}', 'destroy')->name('api.papers.destroy');
     });
 });
 
