@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Academic\AcademicSessionController;
+use App\Http\Controllers\Api\Academic\ClassSetupController;
 use App\Http\Controllers\Api\Academic\GroupController;
 use App\Http\Controllers\Api\Academic\SchoolClassController;
 use App\Http\Controllers\Api\Academic\SectionController;
@@ -108,6 +109,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/group-details/{id}', 'show')->name('api.groups.show');
         Route::post('/group-update/{id}', 'update')->name('api.groups.update');
         Route::delete('/group-delte/{id}', 'destroy')->name('api.groups.destroy');
+    });
+
+
+
+
+    /*--------------------------------------------------
+    School Class Setup Management
+    ->middleware('permission:class_setups.view') ->middleware('permission:class_setups.create') ->middleware('permission:class_setups.view') ->middleware('permission:class_setups.edit') ->middleware('permission:class_setups.delete')
+    ---------------------------------------------------*/
+    Route::controller(ClassSetupController::class)->group(function () {
+        Route::get('/class-setup-lists', 'index')->name('api.class_setups.index');
+        Route::post('/class-setup-store', 'store')->name('api.class_setups.store');
+        Route::get('/class-setup-details/{id}', 'show')->name('api.class_setups.show');
+        Route::post('/class-setup-update/{id}', 'update')->name('api.class_setups.update');
+        Route::delete('/class-setup-delte/{id}', 'destroy')->name('api.class_setups.destroy');
     });
 });
 

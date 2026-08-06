@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\Academic\AcademicController;
 use App\Http\Controllers\Web\Academic\ClassSectionController;
+use App\Http\Controllers\Web\Academic\ClassSetupController;
 use App\Http\Controllers\Web\Academic\ShiftGroupController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\ChangePasswordController;
@@ -77,6 +78,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::get('/academic-session',[AcademicController::class, 'academicSession'])->name('academic-session');
   Route::get('/academic-classes-sections',[ClassSectionController::class, 'academicClassesSections'])->name('academic-classes-sections');
   Route::get('/academic-shifts-groups',[ShiftGroupController::class, 'academicShiftsGroups'])->name('academic-shifts-groups');
+  Route::get('/academic-class-setups',[ClassSetupController::class, 'academicClassSetups'])->name('academic-class-setups');
 
 });
 

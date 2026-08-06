@@ -98,7 +98,7 @@
 
                     <!-- 4. Class Setup: Combine Class, Section, Shift & Group for dynamic configuration -->
                     <li>
-                        <a href="#" class="submenu-link">
+                        <a href="{{url('/academic-class-setups')}}" class="submenu-link">
                             <i class="fa-solid fa-sliders me-2"></i>Class Setup
                         </a>
                     </li>
