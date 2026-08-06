@@ -109,8 +109,15 @@
                             <i class="fa-solid fa-book-open me-2"></i>Subjects
                         </a>
                     </li>
+
+                    <!-- 6. Subjects assigned based on Class and Group setups -->
+                    <li>
+                        <a href="#" class="submenu-link">
+                            <i class="fa-solid fa-book-open me-2"></i>Subject Assignment
+                        </a>
+                    </li>
                     
-                    <!-- 6. Daily schedules, periods, and teacher assignments -->
+                    <!-- 7. Daily schedules, periods, and teacher assignments -->
                     <li>
                         <a href="#" class="submenu-link">
                             <i class="fa-solid fa-clock me-2"></i>Class Routines
