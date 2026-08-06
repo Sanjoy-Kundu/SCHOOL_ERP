@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\Academic\AcademicController;
+use App\Http\Controllers\Web\Academic\ClassSectionController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\ChangePasswordController;
 use App\Http\Controllers\Web\DashboardController;
@@ -73,6 +74,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
    * ----------------------------------------------------------
    */
   Route::get('/academic-session',[AcademicController::class, 'academicSession'])->name('academic-session');
+  Route::get('/academic-classes-sections',[ClassSectionController::class, 'academicClassesSections'])->name('academic-classes-sections');
 
 });
 

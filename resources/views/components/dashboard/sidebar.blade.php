@@ -84,7 +84,7 @@
                     
                     <!-- 2. Basic Classes (6-10) and Sections (A, B, C or N/A) setup -->
                     <li>
-                        <a href="#" class="submenu-link">
+                        <a href="{{url('/academic-classes-sections')}}" class="submenu-link">
                             <i class="fa-solid fa-layer-group me-2"></i>Classes & Sections
                         </a>
                     </li>
