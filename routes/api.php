@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Academic\PaperController;
 use App\Http\Controllers\Api\Academic\SchoolClassController;
 use App\Http\Controllers\Api\Academic\SectionController;
 use App\Http\Controllers\Api\Academic\ShiftController;
+use App\Http\Controllers\Api\Academic\SubjectAssignmentController;
 use App\Http\Controllers\Api\Academic\SubjectController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChangePasswordController;
@@ -153,6 +154,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/paper-details/{id}', 'show')->name('api.papers.show');
         Route::post('/paper-update/{id}', 'update')->name('api.papers.update');
         Route::delete('/paper-delte/{id}', 'destroy')->name('api.papers.destroy');
+    });
+
+
+
+
+    /*--------------------------------------------------
+    School Subject Assignment Management 
+    ->middleware('permission:subject_assignments.view')  ->middleware('permission:subject_assignments.create')  ->middleware('permission:subject_assignments.view')  ->middleware('permission:subject_assignments.edit')   ->middleware('permission:subject_assignments.delete')
+    ---------------------------------------------------*/
+    Route::controller(SubjectAssignmentController::class)->group(function () {
+        Route::get('/subject-assignment-lists', 'index')->name('api.subject_assignments.index');
+        Route::post('/subject-assignment-store', 'store')->name('api.subject_assignments.store');
+        Route::get('/subject-assignment-details/{id}', 'show')->name('api.subject_assignments.show');
+        Route::post('/subject-assignment-update/{id}', 'update')->name('api.subject_assignments.update');
+        Route::delete('/subject-assignment-delte/{id}', 'destroy')->name('api.subject_assignments.destroy');
     });
 });
 

@@ -112,7 +112,7 @@
 
                     <!-- 6. Subjects assigned based on Class and Group setups -->
                     <li>
-                        <a href="#" class="submenu-link">
+                        <a href="{{url('/academic-subject-assignments')}}" class="submenu-link">
                             <i class="fa-solid fa-book-open me-2"></i>Subject Assignment
                         </a>
                     </li>
