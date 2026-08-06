@@ -105,8 +105,8 @@
 
                     <!-- 5. Subjects assigned based on Class and Group setups -->
                     <li>
-                        <a href="#" class="submenu-link">
-                            <i class="fa-solid fa-book-open me-2"></i>Subjects
+                        <a href="{{url('/academic-subject-papers')}}" class="submenu-link">
+                            <i class="fa-solid fa-book-open me-2"></i>Subjects & Papers
                         </a>
                     </li>
 

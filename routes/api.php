@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Academic\GroupController;
 use App\Http\Controllers\Api\Academic\SchoolClassController;
 use App\Http\Controllers\Api\Academic\SectionController;
 use App\Http\Controllers\Api\Academic\ShiftController;
+use App\Http\Controllers\Api\Academic\SubjectController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChangePasswordController;
 use App\Http\Controllers\Api\ForgotPasswordController;
@@ -124,6 +125,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/class-setup-details/{id}', 'show')->name('api.class_setups.show');
         Route::post('/class-setup-update/{id}', 'update')->name('api.class_setups.update');
         Route::delete('/class-setup-delte/{id}', 'destroy')->name('api.class_setups.destroy');
+    });
+
+
+
+    /*--------------------------------------------------
+    Subject Master Management 
+    ->middleware('permission:subjects_papers.view') ->middleware('permission:subjects_papers.create') ->middleware('permission:subjects_papers.view') ->middleware('permission:subjects_papers.edit')  ->middleware('permission:subjects_papers.delete')
+    ---------------------------------------------------*/
+    Route::controller(SubjectController::class)->group(function () {
+        Route::get('/subject-lists', 'index')->name('api.subjects.index');
+        Route::post('/subject-store', 'store')->name('api.subjects.store');
+        Route::get('/subject-details/{id}', 'show')->name('api.subjects.show');
+        Route::post('/subject-update/{id}', 'update')->name('api.subjects.update');
+        Route::delete('/subject-delte/{id}', 'destroy')->name('api.subjects.destroy');
     });
 });
 
