@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Academic\AcademicSessionController;
 use App\Http\Controllers\Api\Academic\SchoolClassController;
+use App\Http\Controllers\Api\Academic\SectionController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChangePasswordController;
 use App\Http\Controllers\Api\ForgotPasswordController;
@@ -62,6 +63,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/school-class-details/{id}', 'show')->name('api.school_classes.show');
         Route::post('/school-class-update/{id}', 'update')->name('api.school_classes.update');
         Route::delete('/school-class-delte/{id}', 'destroy')->name('api.school_classes.destroy');
+    });
+
+
+
+     /*-------------------------------
+       Optional Sections Management 
+       ->middleware('permission:classes_sections.view') ->middleware('permission:classes_sections.create') ->middleware('permission:classes_sections.view') ->middleware('permission:classes_sections.edit') ->middleware('permission:classes_sections.delete')
+    --------------------------------*/
+    Route::controller(SectionController::class)->group(function () {
+        Route::get('/section-lists', 'index')->name('api.sections.index');
+        Route::post('/section-store', 'store')->name('api.sections.store');
+        Route::get('/section-details/{id}', 'show')->name('api.sections.show');
+        Route::post('/section-update/{id}', 'update')->name('api.sections.update');
+        Route::delete('/section-delte/{id}', 'destroy')->name('api.sections.destroy');
     });
 });
 
