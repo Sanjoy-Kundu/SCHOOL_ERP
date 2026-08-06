@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Academic\AcademicSessionController;
+use App\Http\Controllers\Api\Academic\SchoolClassController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChangePasswordController;
 use App\Http\Controllers\Api\ForgotPasswordController;
@@ -47,6 +48,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/academic-session-update/{id}', 'update')->name('api.academic_sessions.update');
         Route::delete('/academic-session-delte/{id}', 'destroy')->name('api.academic_sessions.destroy');
         Route::patch('/academic-session-set-active/{id}', 'setActive')->name('api.academic_sessions.set_active');
+    });
+
+
+
+    /*--------------------------------------------------
+      School Classes Management
+      ->middleware('permission:classes_sections.view') ->middleware('permission:classes_sections.create') ->middleware('permission:classes_sections.view') ->middleware('permission:classes_sections.edit') ->middleware('permission:classes_sections.delete')
+    ---------------------------------------------------*/
+    Route::controller(SchoolClassController::class)->group(function () {
+        Route::get('/school-class-lists', 'index')->name('api.school_classes.index');
+        Route::post('/school-class-store', 'store')->name('api.school_classes.store');
+        Route::get('/school-class-details/{id}', 'show')->name('api.school_classes.show');
+        Route::post('/school-class-update/{id}', 'update')->name('api.school_classes.update');
+        Route::delete('/school-class-delte/{id}', 'destroy')->name('api.school_classes.destroy');
     });
 });
 
