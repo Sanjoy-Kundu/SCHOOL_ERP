@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Academic\AcademicSessionController;
 use App\Http\Controllers\Api\Academic\SchoolClassController;
 use App\Http\Controllers\Api\Academic\SectionController;
+use App\Http\Controllers\Api\Academic\ShiftController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChangePasswordController;
 use App\Http\Controllers\Api\ForgotPasswordController;
@@ -77,6 +78,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/section-details/{id}', 'show')->name('api.sections.show');
         Route::post('/section-update/{id}', 'update')->name('api.sections.update');
         Route::delete('/section-delte/{id}', 'destroy')->name('api.sections.destroy');
+    });
+
+
+
+
+    /*--------------------------------------------------
+    Optional School Shifts Management 
+    ->middleware('permission:shifts_groups.view') ->middleware('permission:shifts_groups.create') ->middleware('permission:shifts_groups.view') ->middleware('permission:shifts_groups.edit') ->middleware('permission:shifts_groups.delete')
+    ---------------------------------------------------*/
+    Route::controller(ShiftController::class)->group(function () {
+        Route::get('/shift-lists', 'index')->name('api.shifts.index');
+        Route::post('/shift-store', 'store')->name('api.shifts.store');
+        Route::get('/shift-details/{id}', 'show')->name('api.shifts.show');
+        Route::post('/shift-update/{id}', 'update')->name('api.shifts.update');
+        Route::delete('/shift-delte/{id}', 'destroy')->name('api.shifts.destroy');
     });
 });
 

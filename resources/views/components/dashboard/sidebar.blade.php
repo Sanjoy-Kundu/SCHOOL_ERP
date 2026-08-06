@@ -91,7 +91,7 @@
                     
                     <!-- 3. Shifts (Morning/Day/N/A) and Groups (Science/Arts/Commerce) setup -->
                     <li>
-                        <a href="#" class="submenu-link">
+                        <a href="{{url('/academic-shifts-groups')}}" class="submenu-link">
                             <i class="fa-solid fa-network-wired me-2"></i>Shifts & Groups
                         </a>
                     </li>
