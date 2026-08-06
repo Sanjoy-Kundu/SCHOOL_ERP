@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Academic\AcademicSessionController;
+use App\Http\Controllers\Api\Academic\GroupController;
 use App\Http\Controllers\Api\Academic\SchoolClassController;
 use App\Http\Controllers\Api\Academic\SectionController;
 use App\Http\Controllers\Api\Academic\ShiftController;
@@ -93,6 +94,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/shift-details/{id}', 'show')->name('api.shifts.show');
         Route::post('/shift-update/{id}', 'update')->name('api.shifts.update');
         Route::delete('/shift-delte/{id}', 'destroy')->name('api.shifts.destroy');
+    });
+
+
+
+     /*--------------------------------------------------
+       School Groups Management 
+       ->middleware('permission:shifts_groups.view') ->middleware('permission:shifts_groups.create') ->middleware('permission:shifts_groups.view') ->middleware('permission:shifts_groups.edit')  ->middleware('permission:shifts_groups.delete')
+    ---------------------------------------------------*/
+    Route::controller(GroupController::class)->group(function () {
+        Route::get('/group-lists', 'index')->name('api.groups.index');
+        Route::post('/group-store', 'store')->name('api.groups.store');
+        Route::get('/group-details/{id}', 'show')->name('api.groups.show');
+        Route::post('/group-update/{id}', 'update')->name('api.groups.update');
+        Route::delete('/group-delte/{id}', 'destroy')->name('api.groups.destroy');
     });
 });
 
