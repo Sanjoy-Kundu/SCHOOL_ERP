@@ -3,6 +3,7 @@
 use App\Http\Controllers\Web\Academic\AcademicController;
 use App\Http\Controllers\Web\Academic\ClassSectionController;
 use App\Http\Controllers\Web\Academic\ClassSetupController;
+use App\Http\Controllers\Web\Academic\ReportPrintController;
 use App\Http\Controllers\Web\Academic\ShiftGroupController;
 use App\Http\Controllers\Web\Academic\SubjectAssignmentController;
 use App\Http\Controllers\Web\Academic\SubjectPapersController;
@@ -98,6 +99,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
    * PRINT AND REPORT PROCESSING 
    * ----------------------------------------------------------------
    */
+  // Maps perfectly to your newly designed collapsible sidebar submenu link 
+  Route::get('/academic-subject-list-print', [ReportPrintController::class, 'subjectListPrint'])->name('academic-subject-list-print');
 
 
 });
