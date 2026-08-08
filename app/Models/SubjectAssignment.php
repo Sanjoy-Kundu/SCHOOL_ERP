@@ -20,6 +20,7 @@ class SubjectAssignment extends Model
         'paper_id',
         'code',
         'is_fourth_subject',
+        'sort_order',
         'status',
     ];
 

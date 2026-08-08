@@ -269,18 +269,44 @@ class SubjectAssignmentController extends Controller
             $assignments = SubjectAssignment::where('class_setup_id', $classSetupId)
                 ->with(['subject', 'paper', 'group'])
                 ->get()
-                ->sortBy(function ($assignment) {
-                    return [
-                        $assignment->group?->sort_order ?? 0,
-                        $assignment->is_fourth_subject ? 1 : 0,
-                        $assignment->subject?->name ?? ''
-                    ];
-                })->values();
+                ->sortBy('sort_order')->values();
 
             return response()->json([
                 'status' => true,
                 'class_setup' => $classSetup,
                 'all_data' => $assignments
+            ], 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
+    /**
+     * Update only the sort order of a specific subject assignment dynamically.
+     */
+    public function updateSortOrder(Request $request, $id)
+    {
+        Gate::authorize('subject_assignments.edit');
+
+        $request->validate([
+            'sort_order' => 'required|integer|min:0'
+        ]);
+
+        try {
+            $assignment = SubjectAssignment::findOrFail($id);
+            $assignment->update([
+                'sort_order' => $request->sort_order
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'সাজানোর ক্রম সফলভাবে আপডেট হয়েছে।'
             ], 200);
 
         } catch (Exception $e) {

@@ -86,15 +86,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::get('/academic-subject-assignment-overviews', [SubjectAssignmentController::class,'academicSubjectAssignmentOverview'])->name('academic-subject-assignment-overviews');  
   Route::get('/academic-subject-assignments-overview/{classSetupId}/details', [SubjectAssignmentController::class,'academicSubjectAssignmentDetails'])->name('academic-subject-assignment-overviews-details');  
 
-  // Subject Assignment Overview Web Routes
-    // Route::get('', function () {
-    //     return view('academic.subject-assignments.overview');
-    // })->middleware('permission:subject_assignments.view')->name('subject-assignments.overview');
 
-    // Subject Assignment Details Web Routes
-    // Route::get('subject-assignments/{classSetupId}/details', function ($classSetupId) {
-    //     return view('academic.subject-assignments.details', compact('classSetupId'));
-    // })->middleware('permission:subject_assignments.view')->name('subject-assignments.details');
+
+
+
+
+
+
+  /**
+   * ----------------------------------------------------------------
+   * PRINT AND REPORT PROCESSING 
+   * ----------------------------------------------------------------
+   */
+
+
 });
 
 

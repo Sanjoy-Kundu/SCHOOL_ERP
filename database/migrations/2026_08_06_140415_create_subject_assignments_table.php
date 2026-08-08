@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('paper_id')->nullable()->constrained('papers')->nullOnDelete();
             $table->string('code')->nullable();
             $table->boolean('is_fourth_subject')->default(false);
+            $table->integer('sort_order')->default(0); 
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

@@ -61,58 +61,61 @@
 
         <!-- MODULE 2: ACADEMIC -->
         <li>
+            <!-- Keep Academic parent active for academic submenus, excluding reports/overviews -->
             <a href="#academicCollapse" 
-            class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('academic*') ? 'active-group' : '' }}"
+            class="sidebar-link d-flex justify-content-between align-items-center {{ (request()->is('academic-*') && !request()->is('academic-subject-assignment-overview*')) ? 'active-group' : '' }}"
             data-bs-toggle="collapse" 
             data-bs-target="#academicCollapse"
             role="button"
-            aria-expanded="{{ request()->is('academic*') ? 'true' : 'false' }}">
+            aria-expanded="{{ (request()->is('academic-*') && !request()->is('academic-subject-assignment-overview*')) ? 'true' : 'false' }}">
                 <div>
                     <i class="fa-solid fa-school me-3"></i>Academic
                 </div>
                 <i class="fa-solid fa-chevron-down small transition-icon"></i>
             </a>
 
-            <div class="collapse {{ request()->is('academic*') ? 'show' : '' }}" id="academicCollapse">
+            <!-- Automatically expand Academic menu only when active on academic submenus -->
+            <div class="collapse {{ (request()->is('academic-*') && !request()->is('academic-subject-assignment-overview*')) ? 'show' : '' }}" id="academicCollapse">
                 <ul class="list-unstyled ps-4">
                     <!-- 1. Academic Sessions (e.g., Year 2020-2030 setup) -->
                     <li>
-                        <a href="{{url('/academic-session')}}" class="submenu-link">
+                        <a href="{{url('/academic-session')}}" class="submenu-link {{ request()->is('academic-session*') ? 'active' : '' }}">
                             <i class="fa-solid fa-calendar-check me-2"></i>Academic Sessions
                         </a>
                     </li>
                     
                     <!-- 2. Basic Classes (6-10) and Sections (A, B, C or N/A) setup -->
                     <li>
-                        <a href="{{url('/academic-classes-sections')}}" class="submenu-link">
+                        <a href="{{url('/academic-classes-sections')}}" class="submenu-link {{ request()->is('academic-classes-sections*') ? 'active' : '' }}">
                             <i class="fa-solid fa-layer-group me-2"></i>Classes & Sections
                         </a>
                     </li>
                     
                     <!-- 3. Shifts (Morning/Day/N/A) and Groups (Science/Arts/Commerce) setup -->
                     <li>
-                        <a href="{{url('/academic-shifts-groups')}}" class="submenu-link">
+                        <a href="{{url('/academic-shifts-groups')}}" class="submenu-link {{ request()->is('academic-shifts-groups*') ? 'active' : '' }}">
                             <i class="fa-solid fa-network-wired me-2"></i>Shifts & Groups
                         </a>
                     </li>
 
                     <!-- 4. Class Setup: Combine Class, Section, Shift & Group for dynamic configuration -->
                     <li>
-                        <a href="{{url('/academic-class-setups')}}" class="submenu-link">
+                        <a href="{{url('/academic-class-setups')}}" class="submenu-link {{ request()->is('academic-class-setups*') ? 'active' : '' }}">
                             <i class="fa-solid fa-sliders me-2"></i>Class Setup
                         </a>
                     </li>
 
-                    <!-- 5. Subjects assigned based on Class and Group setups -->
+                    <!-- 5. Subjects & Papers Master Data Management -->
                     <li>
-                        <a href="{{url('/academic-subject-papers')}}" class="submenu-link">
+                        <a href="{{url('/academic-subject-papers')}}" class="submenu-link {{ request()->is('academic-subject-papers*') ? 'active' : '' }}">
                             <i class="fa-solid fa-book-open me-2"></i>Subjects & Papers
                         </a>
                     </li>
 
-                    <!-- 6. Subjects assigned based on Class and Group setups -->
+                    <!-- 6. Subject Assignment configuration mapping -->
                     <li>
-                        <a href="{{url('/academic-subject-assignments')}}" class="submenu-link">
+                        <!-- Exclude overviews report route matching explicitly -->
+                        <a href="{{url('/academic-subject-assignments')}}" class="submenu-link {{ (request()->is('academic-subject-assignments*') && !request()->is('academic-subject-assignment-overviews*')) ? 'active' : '' }}">
                             <i class="fa-solid fa-book-open me-2"></i>Subject Assignment
                         </a>
                     </li>
@@ -393,14 +396,61 @@
             </div>
         </li>
 
-        <!-- MODULE 10: REPORTS (Flat Link) -->
+        <!-- MODULE 10: REPORTS & PRINT (Collapsible Parent Module) -->
         <li>
-            <a href="#" class="sidebar-link {{ request()->is('reports*') ? 'active' : '' }}">
-                <i class="fa-solid fa-chart-pie me-3"></i>Reports & Analytics
+            <!-- 
+                Active check covers both the print page, overview page, 
+                and deep details page dynamically to keep the group active 
+            -->
+            <a href="#reportsCollapse" 
+            class="sidebar-link d-flex justify-content-between align-items-center {{ (request()->is('academic-subject-list-print*') || request()->is('academic-subject-assignment-overview*') || request()->is('academic-subject-assignments-overview*')) ? 'active-group' : '' }}"
+            data-bs-toggle="collapse" 
+            data-bs-target="#reportsCollapse"
+            role="button"
+            aria-expanded="{{ (request()->is('academic-subject-list-print*') || request()->is('academic-subject-assignment-overview*') || request()->is('academic-subject-assignments-overview*')) ? 'true' : 'false' }}">
+                <div>
+                    <i class="fa-solid fa-print me-3"></i>Reports & Print
+                </div>
+                <i class="fa-solid fa-chevron-down small transition-icon"></i>
             </a>
+
+            <!-- Expand parent automatically when viewing printable reports, overviews, or details page -->
+            <div class="collapse {{ (request()->is('academic-subject-list-print*') || request()->is('academic-subject-assignment-overview*') || request()->is('academic-subject-assignments-overview*')) ? 'show' : '' }}" id="reportsCollapse">
+                <ul class="list-unstyled ps-4">
+                    <!-- Academic Reports Sub-group -->
+                    <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-2 mb-1" style="font-size: 10px; letter-spacing: 0.5px;">Academic</li>
+                    <li>
+                        <!-- Subject Lists (Dynamic Overview & Printable Report Page) -->
+                        <a href="{{ url('/academic-subject-list-print') }}" class="submenu-link {{ request()->is('academic-subject-list-print*') ? 'active' : '' }}">
+                            <i class="fa-solid fa-book-open me-2"></i>Subject Lists
+                        </a>
+                    </li>
+                    <li>
+                        <!-- Class Routine Printable -->
+                        <a href="#" class="submenu-link">
+                            <i class="fa-solid fa-calendar-days me-2"></i>Class Routine
+                        </a>
+                    </li>
+
+                    <!-- Students Reports Sub-group -->
+                    <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-3 mb-1" style="font-size: 10px; letter-spacing: 0.5px;">Students</li>
+                    <li>
+                        <!-- Student Roster Listing Printable -->
+                        <a href="#" class="submenu-link">
+                            <i class="fa-solid fa-address-book me-2"></i>Student Roster
+                        </a>
+                    </li>
+                    <li>
+                        <!-- Dynamic ID Card Print Panel -->
+                        <a href="#" class="submenu-link">
+                            <i class="fa-solid fa-id-card me-2"></i>ID Card Print
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
 
-       <!-- MODULE 11: USER MANAGEMENT (Active) -->
+       <!-- MODULE 11: USER MANAGEMENT -->
         <li>
             <a href="#userManagementCollapse" 
                class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('users*') ? 'active-group' : '' }}"
@@ -470,7 +520,7 @@
             </div>
         </li>
 
-        <!-- MODULE 12: SETTINGS -->
+        <!-- MODULE 13: SETTINGS -->
         <li>
             <a href="#settingsCollapse" 
                class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('settings*') ? 'active-group' : '' }}"
