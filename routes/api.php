@@ -161,7 +161,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*--------------------------------------------------
     School Subject Assignment Management 
-    ->middleware('permission:subject_assignments.view')  ->middleware('permission:subject_assignments.create')  ->middleware('permission:subject_assignments.view')  ->middleware('permission:subject_assignments.edit')   ->middleware('permission:subject_assignments.delete')
+    ->middleware('permission:subject_assignments.view')  ->middleware('permission:subject_assignments.create')  ->middleware('permission:subject_assignments.view')  ->middleware('permission:subject_assignments.edit')   ->middleware('permission:subject_assignments.delete') ->middleware('permission:subject_assignments.view')  ->middleware('permission:subject_assignments.view')
     ---------------------------------------------------*/
     Route::controller(SubjectAssignmentController::class)->group(function () {
         Route::get('/subject-assignment-lists', 'index')->name('api.subject_assignments.index');
@@ -169,6 +169,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/subject-assignment-details/{id}', 'show')->name('api.subject_assignments.show');
         Route::post('/subject-assignment-update/{id}', 'update')->name('api.subject_assignments.update');
         Route::delete('/subject-assignment-delte/{id}', 'destroy')->name('api.subject_assignments.destroy');
+        Route::get('/subject-assignment-overviews', 'getOverviews')->name('api.subject_assignments.overviews');
+        Route::get('/subject-assignment-overviews/{classSetupId}', 'getDetails')->name('api.subject_assignments.details');
     });
 });
 

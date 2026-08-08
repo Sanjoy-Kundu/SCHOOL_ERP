@@ -61,4 +61,12 @@ protected $table = 'class_setups';
     {
         return $this->belongsTo(Group::class, 'group_id');
     }
+
+        /**
+     * Relationship: One Class Setup has many Subject Assignments  
+     */
+    public function subjectAssignments()
+    {
+        return $this->hasMany(SubjectAssignment::class, 'class_setup_id');
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Academic;
 
 use App\Http\Controllers\Controller;
+use App\Models\ClassSetup;
 use App\Models\SubjectAssignment;
 use Exception;
 use Illuminate\Http\Request;
@@ -207,6 +208,79 @@ class SubjectAssignmentController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Subject assignment deleted successfully.'
+            ], 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
+    /**
+     * Fetch unique Class Setups that have active subject assignments (Grouped Overview).
+     */
+    public function getOverviews()
+    {
+        Gate::authorize('subject_assignments.view');
+
+        try {
+            // Retrieve only Class Setups that have mapped subjects with strict eager loading
+            $setups = ClassSetup::with(['class', 'section', 'shift', 'group'])
+                ->whereHas('subjectAssignments')
+                ->get()
+                ->sortBy(function ($setup) {
+                    return [
+                        $setup->class?->sort_order ?? 0,
+                        $setup->section?->sort_order ?? 0,
+                        $setup->shift?->sort_order ?? 0,
+                        $setup->group?->sort_order ?? 0
+                    ];
+                })->values();
+
+            return response()->json([
+                'status' => true,
+                'all_data' => $setups
+            ], 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Fetch all mapped subjects for a specific Class Setup in detail view.
+     */
+    public function getDetails($classSetupId)
+    {
+        Gate::authorize('subject_assignments.view');
+
+        try {
+            // Fetch the Class Setup details
+            $classSetup = ClassSetup::with(['class', 'section', 'shift', 'group'])->findOrFail($classSetupId);
+
+            // Fetch subject assignments associated with this specific Class Setup
+            $assignments = SubjectAssignment::where('class_setup_id', $classSetupId)
+                ->with(['subject', 'paper', 'group'])
+                ->get()
+                ->sortBy(function ($assignment) {
+                    return [
+                        $assignment->group?->sort_order ?? 0,
+                        $assignment->is_fourth_subject ? 1 : 0,
+                        $assignment->subject?->name ?? ''
+                    ];
+                })->values();
+
+            return response()->json([
+                'status' => true,
+                'class_setup' => $classSetup,
+                'all_data' => $assignments
             ], 200);
 
         } catch (Exception $e) {

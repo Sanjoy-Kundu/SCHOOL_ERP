@@ -47,7 +47,7 @@
         <div>
             <h1 class="h3 mb-1 text-gray-800 fw-bold title-responsive">বিষয় এসাইনমেন্ট (Subject Assignment)</h1>
             <p class="text-muted small mb-0">শ্রেণী কাঠামো (Class Setup) অনুযায়ী মাস্টার বিষয়, ঐচ্ছিক বিভাগ এবং স্বাধীন পত্রসমূহ ম্যাপিং করুন।</p>
-            <button class="btn btn-primary btn-sm mt-2"><a href="" style="text-decoration: none; color:white">শ্রেণী কাঠামো বিস্তারিত</a></button>
+            <button class="btn btn-primary btn-sm mt-2"><a href="{{url('/academic-subject-assignment-overviews')}}" style="text-decoration: none; color:white">বিষয় ভিত্তিক ওভারভিউ</a></button>
         </div>
     </div>
 
