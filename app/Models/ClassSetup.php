@@ -37,6 +37,11 @@ protected $table = 'class_setups';
         return $this->belongsTo(SchoolClass::class, 'class_id');
     }
 
+    public function schoolClass()
+    {
+        return $this->belongsTo(SchoolClass::class, 'class_id');
+    }
+
     /**
      * Relationship: Setup belongs to a master section (optional).
      */
@@ -60,4 +65,8 @@ protected $table = 'class_setups';
     {
         return $this->belongsTo(Group::class, 'group_id');
     }
+
+    public function subjectAssignments() {
+    return $this->hasMany(SubjectAssignment::class, 'class_setup_id');
+}
 }

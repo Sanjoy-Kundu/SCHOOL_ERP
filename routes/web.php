@@ -11,6 +11,7 @@ use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\ChangePasswordController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\EmailVerificationController;
+use App\Http\Controllers\Web\Exam\ExamSetupController;
 use App\Http\Controllers\web\Exam\ExamTypeController;
 use App\Http\Controllers\Web\ForgotPasswordController;
 use App\Http\Controllers\Web\Settings\SchoolInformationController;
@@ -108,7 +109,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
    * EXAM TYPE PROCESSING 
    * ----------------------------------------------------------------
    */
-Route::get('/exms/exam-types', [ExamTypeController::class, 'examTypePage'])->name('exms.exam-types.index');
+   Route::get('/exms/exam-types', [ExamTypeController::class, 'examTypePage'])->name('exms.exam-types.index');
+   Route::get('/exms/exam-setups', [ExamSetupController::class, 'examSetupPage'])->name('exms.exam-setups.index');
 
 
 

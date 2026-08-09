@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Academic\SubjectAssignmentController;
 use App\Http\Controllers\Api\Academic\SubjectController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChangePasswordController;
+use App\Http\Controllers\Api\Exam\ExamSetupController;
 use App\Http\Controllers\Api\Exam\ExamTypeController;
 use App\Http\Controllers\Api\ForgotPasswordController;
 use App\Http\Controllers\Api\Settings\SchoolInformationController;
@@ -199,6 +200,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/exam-type-details/{id}', 'show')->name('api.exam-types.show');
         Route::post('/exam-type-update/{id}', 'update')->name('api.exam-types.update');
         Route::delete('/exam-type-delete/{id}', 'destroy')->name('api.exam-types.destroy');
+    });
+
+
+    /*--------------------------------------------------
+      Exam Setup 
+    ---------------------------------------------------*/
+     Route::controller(ExamSetupController::class)->group(function () {
+        Route::get('/exam-setup-lists', 'index')->name('api.exam-setups.index');
+        Route::post('/exam-setup-store', 'store')->name('api.exam-setups.store');
+        Route::get('/exam-setup-details/{id}', 'show')->name('api.exam-setups.show');
+        Route::post('/exam-setup-update/{id}', 'update')->name('api.exam-setups.update');
+        Route::delete('/exam-setup-delete/{id}', 'destroy')->name('api.exam-setups.destroy');
+        Route::get('/exam-setup-dependencies', 'getFormDependencies')->name('api.exam-setups.dependencies');
     });
 });
 
