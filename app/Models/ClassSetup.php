@@ -29,7 +29,7 @@ protected $table = 'class_setups';
         'status' => 'boolean',
     ];
 
-    /**
+ /**
      * Relationship: Setup belongs to a master class.
      */
     public function class()
@@ -53,13 +53,11 @@ protected $table = 'class_setups';
         return $this->belongsTo(Shift::class, 'shift_id');
     }
 
-
-
-        /**
-     * Relationship: One Class Setup has many Subject Assignments  
+    /**
+     * Relationship: Setup belongs to a master academic group (optional).
      */
-    public function subjectAssignments()
+    public function group()
     {
-        return $this->hasMany(SubjectAssignment::class, 'class_setup_id');
+        return $this->belongsTo(Group::class, 'group_id');
     }
 }

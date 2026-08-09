@@ -11,6 +11,7 @@ use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\ChangePasswordController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\EmailVerificationController;
+use App\Http\Controllers\web\Exam\ExamTypeController;
 use App\Http\Controllers\Web\ForgotPasswordController;
 use App\Http\Controllers\Web\Settings\SchoolInformationController;
 use App\Mail\VerificationMail;
@@ -101,6 +102,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
    * ----------------------------------------------------------------
    */
   Route::get('/academic-subject-list-print', [ReportPrintController::class, 'subjectListPrint'])->name('academic-subject-list-print');
+
+  /**
+   * ----------------------------------------------------------------
+   * EXAM TYPE PROCESSING 
+   * ----------------------------------------------------------------
+   */
+Route::get('/exms/exam-types', [ExamTypeController::class, 'examTypePage'])->name('exms.exam-types.index');
 
 
 

@@ -267,7 +267,7 @@
                 <ul class="list-unstyled ps-4">
                     <li>
                         <!-- BD Context: Changed from 'Exam Terms' to 'Exam Types' (e.g., Half Yearly, Annual, Test) -->
-                        <a href="#" class="submenu-link">
+                        <a href="{{url('/exms/exam-types')}}" class="submenu-link">
                             <i class="fa-solid fa-list-check me-2"></i>Exam Types
                         </a>
                     </li>
