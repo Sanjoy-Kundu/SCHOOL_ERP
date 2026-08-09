@@ -17,7 +17,6 @@ protected $table = 'class_setups';
         'class_id',
         'section_id',
         'shift_id',
-        'group_id',
         'status',
     ];
 
@@ -54,13 +53,7 @@ protected $table = 'class_setups';
         return $this->belongsTo(Shift::class, 'shift_id');
     }
 
-    /**
-     * Relationship: Setup belongs to a master academic group (optional).
-     */
-    public function group()
-    {
-        return $this->belongsTo(Group::class, 'group_id');
-    }
+
 
         /**
      * Relationship: One Class Setup has many Subject Assignments  

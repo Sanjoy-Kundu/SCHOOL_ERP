@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('class_id')->constrained('school_classes')->cascadeOnDelete();
             $table->foreignId('section_id')->nullable()->constrained('sections')->nullOnDelete();
             $table->foreignId('shift_id')->nullable()->constrained('shifts')->nullOnDelete();
-            $table->foreignId('group_id')->nullable()->constrained('groups')->nullOnDelete();
             $table->boolean('status')->default(true); 
             $table->timestamps();
         });

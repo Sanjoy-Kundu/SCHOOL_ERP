@@ -46,13 +46,12 @@
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
             <h1 class="h3 mb-1 text-gray-800 fw-bold title-responsive">শ্রেণী বিন্যাসকরণ (Class Setup)</h1>
-            <p class="text-muted small mb-0">বিদ্যালয়ের পুনর্ব্যবহারযোগ্য সেশন-স্বাধীন শ্রেণীর অভ্যন্তরীণ কাঠামো (শ্রেণী, শাখা, শিফট ও বিভাগ) সাজান।</p>
+            <p class="text-muted small mb-0">বিদ্যালয়ের পুনর্ব্যবহারযোগ্য সেশন-স্বাধীন শ্রেণীর অভ্যন্তরীণ কাঠামো (শ্রেণী, শাখা ও শিফট) সাজান।</p>
         </div>
     </div>
 
     <div class="row g-4 flex-column-reverse flex-lg-row">
         <!-- Left Column: Interactive Setups List DataTable -->
-        <!-- Dynamically adjusts column span if creation form is omitted or hidden based on authorization -->
         <div class="col-12 {{ auth()->user()->can('class_setups.create') ? 'col-xl-8 col-lg-7' : 'col-xl-12' }}" id="tableCard">
             <div class="card border-0 card-responsive p-3 p-sm-4 bg-white shadow-sm">
                 <h5 class="fw-bold text-dark mb-4">
@@ -67,7 +66,6 @@
                                 <th>শ্রেণী (Class)</th>
                                 <th>শাখা (Section)</th>
                                 <th>শিফট (Shift)</th>
-                                <th>বিভাগ (Group)</th>
                                 <th>অবস্থা</th>
                                 <!-- Hide Action header completely if user cannot edit/delete -->
                                 @canany(['class_setups.edit', 'class_setups.delete'])
@@ -77,7 +75,7 @@
                         </thead>
                         <tbody id="setupsTableBody">
                             <tr>
-                                <td colspan="{{ auth()->user()->canAny(['class_setups.edit', 'class_setups.delete']) ? 7 : 6 }}" class="text-center p-4">
+                                <td colspan="{{ auth()->user()->canAny(['class_setups.edit', 'class_setups.delete']) ? 6 : 5 }}" class="text-center p-4">
                                     <div class="spinner-border text-success" role="status"></div>
                                     <span class="ms-2">বিন্যাস তালিকা লোড হচ্ছে...</span>
                                 </td>
@@ -89,7 +87,6 @@
         </div>
 
         <!-- Right Column: Create / Edit Class Setup Form -->
-        <!-- Displayed only if the user is authorized to create or edit configurations -->
         @canany(['class_setups.create', 'class_setups.edit'])
             <div class="col-12 col-xl-4 col-lg-5 {{ !auth()->user()->can('class_setups.create') ? 'd-none' : '' }}" id="formCard">
                 <div class="card border-0 card-responsive shadow-sm bg-white p-3 p-sm-4 p-md-5">
@@ -127,15 +124,6 @@
                                 <option value="" selected>Select Shift</option>
                             </select>
                             <div class="invalid-feedback" id="error-shift-id"></div>
-                        </div>
-
-                        <!-- Group Dropdown (Optional) -->
-                        <div class="mb-3">
-                            <label for="groupId" class="form-label fw-semibold small text-secondary">বিভাগ (Group)</label>
-                            <select class="form-select form-select-lg rounded-3 fs-6 form-control-academic" id="groupId">
-                                <option value="" selected>Select Group</option>
-                            </select>
-                            <div class="invalid-feedback" id="error-group-id"></div>
                         </div>
 
                         <!-- Is Active Toggle Switch -->
@@ -215,7 +203,6 @@ function renderSetups(setups) {
         const className = item.class ? item.class.name : '—';
         const sectionName = item.section ? item.section.name : '—';
         const shiftName = item.shift ? item.shift.name : '—';
-        const groupName = item.group ? item.group.name : '—';
 
         return `
             <tr>
@@ -223,7 +210,6 @@ function renderSetups(setups) {
                 <td class="fw-semibold">${className}</td>
                 <td>${sectionName}</td>
                 <td>${shiftName}</td>
-                <td>${groupName}</td>
                 <td>
                     <span class="badge ${item.status ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'} px-3 py-2 rounded-pill fw-bold">
                         ${item.status ? 'সক্রিয়' : 'নিষ্ক্রিয়'}
@@ -249,7 +235,7 @@ function initializeSetupsDataTable() {
         responsive: true,
         order: [], // Preserves manual display priority set on controller side on load
         columnDefs: [
-            { orderable: false, targets: (canEditSetup || canDeleteSetup) ? [0, 6] : [0] }
+            { orderable: false, targets: (canEditSetup || canDeleteSetup) ? [0, 5] : [0] } // Adjusted targets index for deleted group column
         ],
         language: {
             search: 'সহজ অনুসন্ধান:',
@@ -281,11 +267,10 @@ async function loadSetupsList() {
 // 4. Fetch dynamic dropdown datasets from active master tables
 async function loadFormDropdowns() {
     try {
-        const [classesRes, sectionsRes, shiftsRes, groupsRes] = await axios.all([
+        const [classesRes, sectionsRes, shiftsRes] = await axios.all([
             axios.get('/api/school-class-lists'),
             axios.get('/api/section-lists'),
-            axios.get('/api/shift-lists'),
-            axios.get('/api/group-lists')
+            axios.get('/api/shift-lists')
         ]);
 
         // Populate active Classes
@@ -315,15 +300,6 @@ async function loadFormDropdowns() {
             $('#shiftId').html(shiftOptions);
         }
 
-        // Populate active Groups
-        if (groupsRes.data?.status && groupsRes.data?.data) {
-            let groupOptions = '<option value="">Select Group</option>';
-            groupsRes.data.data.forEach(item => {
-                groupOptions += `<option value="${item.id}">${item.name}</option>`;
-            });
-            $('#groupId').html(groupOptions);
-        }
-
     } catch (error) {
         console.warn('Failed to populate dynamic form datasets.');
     }
@@ -335,7 +311,6 @@ function resetFormState() {
     $('#classId').val('').removeClass('is-invalid');
     $('#sectionId').val('').removeClass('is-invalid');
     $('#shiftId').val('').removeClass('is-invalid');
-    $('#groupId').val('').removeClass('is-invalid');
     $('#status').prop('checked', true);
 
     // Clear Validation Errors
@@ -369,7 +344,6 @@ if (createFormElement) {
         const classIdInput = document.getElementById('classId');
         const sectionIdInput = document.getElementById('sectionId');
         const shiftIdInput = document.getElementById('shiftId');
-        const groupIdInput = document.getElementById('groupId');
         const editId = document.getElementById('editSetupId').value;
 
         submitBtn.disabled = true;
@@ -383,7 +357,6 @@ if (createFormElement) {
             class_id: classIdInput.value,
             section_id: sectionIdInput.value || null,
             shift_id: shiftIdInput.value || null,
-            group_id: groupIdInput.value || null,
             status: document.getElementById('status').checked ? 1 : 0
         };
 
@@ -424,10 +397,6 @@ if (createFormElement) {
                     if (errors.shift_id) {
                         shiftIdInput.classList.add('is-invalid');
                         document.getElementById('error-shift-id').innerHTML = errors.shift_id[0];
-                    }
-                    if (errors.group_id) {
-                        groupIdInput.classList.add('is-invalid');
-                        document.getElementById('error-group-id').innerHTML = errors.group_id[0];
                     }
                 }
                 
@@ -479,7 +448,6 @@ $('#setupsTableBody').on('click', '.setupEdit', async function(e) {
             $('#classId').val(setup.class_id);
             $('#sectionId').val(setup.section_id ?? '');
             $('#shiftId').val(setup.shift_id ?? '');
-            $('#groupId').val(setup.group_id ?? '');
             $('#status').prop('checked', setup.status == 1);
 
             $('#submitBtn').text('Update Configuration').css('background-color', '#1a237e'); // Primary contrast for edit mode

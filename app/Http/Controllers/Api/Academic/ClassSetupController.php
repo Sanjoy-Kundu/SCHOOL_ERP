@@ -18,14 +18,13 @@ class ClassSetupController extends Controller
         Gate::authorize('class_setups.view');
 
         try {
-            // Retrieve with eager load and sort sequentially based on sort_order priorities
-            $setups = ClassSetup::with(['class', 'section', 'shift', 'group'])->get()
+            // Retrieve with eager load and sort sequentially based on sort_order priorities (Group relation removed)
+            $setups = ClassSetup::with(['class', 'section', 'shift'])->get()
                 ->sortBy(function ($setup) {
                     return [
                         $setup->class?->sort_order ?? 0,
                         $setup->section?->sort_order ?? 0,
-                        $setup->shift?->sort_order ?? 0,
-                        $setup->group?->sort_order ?? 0
+                        $setup->shift?->sort_order ?? 0
                     ];
                 })->values();
 
@@ -53,21 +52,17 @@ class ClassSetupController extends Controller
             'class_id' => 'required|exists:school_classes,id',
             'section_id' => 'nullable|exists:sections,id',
             'shift_id' => 'nullable|exists:shifts,id',
-            'group_id' => 'nullable|exists:groups,id',
             'status' => 'nullable|boolean'
         ]);
 
         try {
-            // Duplicate prevention strategy: Explicit check handling database NULL values [cite: 1.1.2]
+            // Duplicate prevention strategy: Explicit check handling database NULL values (Group constraint removed)
             $exists = ClassSetup::where('class_id', $request->class_id)
                 ->where(function ($q) use ($request) {
                     $request->section_id ? $q->where('section_id', $request->section_id) : $q->whereNull('section_id');
                 })
                 ->where(function ($q) use ($request) {
                     $request->shift_id ? $q->where('shift_id', $request->shift_id) : $q->whereNull('shift_id');
-                })
-                ->where(function ($q) use ($request) {
-                    $request->group_id ? $q->where('group_id', $request->group_id) : $q->whereNull('group_id');
                 })
                 ->exists();
 
@@ -82,7 +77,6 @@ class ClassSetupController extends Controller
                 'class_id' => $request->class_id,
                 'section_id' => $request->section_id ?? null,
                 'shift_id' => $request->shift_id ?? null,
-                'group_id' => $request->group_id ?? null,
                 'status' => $request->boolean('status', true)
             ]);
 
@@ -134,23 +128,19 @@ class ClassSetupController extends Controller
             'class_id' => 'required|exists:school_classes,id',
             'section_id' => 'nullable|exists:sections,id',
             'shift_id' => 'nullable|exists:shifts,id',
-            'group_id' => 'nullable|exists:groups,id',
             'status' => 'nullable|boolean'
         ]);
 
         try {
             $setup = ClassSetup::findOrFail($id);
 
-            // Duplicate prevention strategy: Explicit check excluding current ID [cite: 1.1.2]
+            // Duplicate prevention strategy: Explicit check excluding current ID (Group constraint removed)
             $exists = ClassSetup::where('class_id', $request->class_id)
                 ->where(function ($q) use ($request) {
                     $request->section_id ? $q->where('section_id', $request->section_id) : $q->whereNull('section_id');
                 })
                 ->where(function ($q) use ($request) {
                     $request->shift_id ? $q->where('shift_id', $request->shift_id) : $q->whereNull('shift_id');
-                })
-                ->where(function ($q) use ($request) {
-                    $request->group_id ? $q->where('group_id', $request->group_id) : $q->whereNull('group_id');
                 })
                 ->where('id', '!=', $id)
                 ->exists();
@@ -166,7 +156,6 @@ class ClassSetupController extends Controller
                 'class_id' => $request->class_id,
                 'section_id' => $request->section_id ?? null,
                 'shift_id' => $request->shift_id ?? null,
-                'group_id' => $request->group_id ?? null,
                 'status' => $request->boolean('status', $setup->status)
             ]);
 
