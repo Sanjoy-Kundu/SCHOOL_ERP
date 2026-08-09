@@ -12,6 +12,7 @@ use App\Http\Controllers\Web\ChangePasswordController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\EmailVerificationController;
 use App\Http\Controllers\Web\ForgotPasswordController;
+use App\Http\Controllers\Web\Settings\SchoolInformationController;
 use App\Mail\VerificationMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -99,8 +100,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
    * PRINT AND REPORT PROCESSING 
    * ----------------------------------------------------------------
    */
-  // Maps perfectly to your newly designed collapsible sidebar submenu link 
   Route::get('/academic-subject-list-print', [ReportPrintController::class, 'subjectListPrint'])->name('academic-subject-list-print');
+
+
+
+
+  /**
+     * ---------------------------------------------------------
+     * MASTER SETTINGS MANAGEMENT PORTAL (Only GET View)
+     * ---------------------------------------------------------
+     */
+    Route::get('/settings/school-information', [SchoolInformationController::class, 'schoolInformationCreate'])->name('settings.school-information.create');
+
 
 
 });

@@ -1,21 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Web\Academic;
+namespace App\Http\Controllers\Web\Settings;
 
 use App\Http\Controllers\Controller;
 use Exception;
 
-
-class ReportPrintController extends Controller
+class SchoolInformationController extends Controller
 {
-    /**
-     * Render the centralized master subject list print view.
+/**
+     * Display the School Information Management panel.
      */
-    public function subjectListPrint()
+    public function schoolInformationCreate()
     {
         try{
         // Points to the future printable subject map page 
-        return view('pages.dashboard.academic.reports.subjectListPrintPage');
+        return view('pages.dashboard.settings.school-information.schoolInformationPage');
         }catch (Exception $e) {
             return response()->json([
                 'status' => false,

@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Academic\SubjectController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChangePasswordController;
 use App\Http\Controllers\Api\ForgotPasswordController;
+use App\Http\Controllers\Api\Settings\SchoolInformationController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -172,6 +173,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/subject-assignment-overviews', 'getOverviews')->name('api.subject_assignments.overviews');
         Route::get('/subject-assignment-overviews/{classSetupId}', 'getDetails')->name('api.subject_assignments.details');
          Route::patch('/subject-assignment-sort-order/{id}', 'updateSortOrder')->name('api.subject_assignments.sort_order');
+    });
+
+
+
+
+
+    /*--------------------------------------------------
+      Master School Information API Gateway
+    ---------------------------------------------------*/
+    Route::controller(SchoolInformationController::class)->group(function () {
+        Route::get('/school-information-details', 'show')->name('api.school-information.show');
+        Route::post('/school-information-update', 'update')->name('api.school-information.update');
     });
 });
 

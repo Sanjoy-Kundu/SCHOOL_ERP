@@ -537,7 +537,7 @@
             <div class="collapse {{ request()->is('settings*') ? 'show' : '' }}" id="settingsCollapse">
                 <ul class="list-unstyled ps-4">
                     <li>
-                        <a href="#" class="submenu-link">
+                        <a href="{{url('/settings/school-information')}}" class="submenu-link">
                             <i class="fa-solid fa-circle-info me-2"></i>School Information
                         </a>
                     </li>
