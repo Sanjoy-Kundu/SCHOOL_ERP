@@ -277,7 +277,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="submenu-link">
+                        <a href="{{url('/exms/exam-schedules')}}" class="submenu-link">
                             <i class="fa-solid fa-calendar-days me-2"></i>Exam Schedule
                         </a>
                     </li>

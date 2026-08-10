@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Academic\SubjectAssignmentController;
 use App\Http\Controllers\Api\Academic\SubjectController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChangePasswordController;
+use App\Http\Controllers\Api\Exam\ExamScheduleController;
 use App\Http\Controllers\Api\Exam\ExamSetupController;
 use App\Http\Controllers\Api\Exam\ExamTypeController;
 use App\Http\Controllers\Api\ForgotPasswordController;
@@ -213,6 +214,22 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/exam-setup-update/{id}', 'update')->name('api.exam-setups.update');
         Route::delete('/exam-setup-delete/{id}', 'destroy')->name('api.exam-setups.destroy');
         Route::get('/exam-setup-dependencies', 'getFormDependencies')->name('api.exam-setups.dependencies');
+    });
+
+
+     /*--------------------------------------------------
+      Exam Schedule API Routes - FIXED: Fully Mapped [cite: 19]
+    ---------------------------------------------------*/
+    Route::controller(ExamScheduleController::class)->group(function () {
+        Route::get('/exam-schedule-lists', 'index')->name('api.exam-schedules.index');
+        Route::post('/exam-schedule-store', 'store')->name('api.exam-schedules.store');
+        Route::get('/exam-schedule-details/{id}', 'show')->name('api.exam-schedules.show');
+        Route::post('/exam-schedule-update/{id}', 'update')->name('api.exam-schedules.update');
+        Route::delete('/exam-schedule-delete/{id}', 'destroy')->name('api.exam-schedules.destroy');
+
+      
+        Route::get('/academic/exam-schedules/class-setups/{classId}', 'getClassSetups')->name('api.exam-schedules.class-setups');
+        Route::get('/academic/exam-schedules/subject-assignments/{classSetupId}', 'getSubjectAssignments')->name('api.exam-schedules.subject-assignments');
     });
 });
 
