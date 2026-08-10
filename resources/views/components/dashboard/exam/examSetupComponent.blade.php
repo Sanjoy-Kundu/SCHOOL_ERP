@@ -222,6 +222,7 @@ function convertToBanglaNumber(number) {
 // Render dynamic Table lists with action buttons
 function renderExamSetups(setups) {
     const rows = setups.map((item, index) => {
+        console.log(item);
         let actionColumnHtml = '';
         if (canEditSetup || canDeleteSetup) {
             actionColumnHtml = `
@@ -231,7 +232,7 @@ function renderExamSetups(setups) {
                             অ্যাকশন
                         </button>
                         <ul class="dropdown-menu shadow border-0 rounded-3 mt-1">
-                            <li><a class="dropdown-item setupView py-2 px-3 small" href="#" data-id="${item.id}"><i class="fa-solid fa-eye text-primary me-2"></i>বিস্তারিত দেখুন</a></li>
+                            <li><a class="dropdown-item setupView py-2 px-3 small" href="#" data-id="${item.class_setup_id}"><i class="fa-solid fa-eye text-primary me-2"></i>বিস্তারিত দেখুন</a></li>
                             ${canEditSetup ? `<li><a class="dropdown-item setupEdit py-2 px-3 small" href="#" data-id="${item.id}"><i class="fa-solid fa-pencil text-warning me-2"></i>এডিট করুন</a></li>` : ''}
                             ${canDeleteSetup ? `<li><a class="dropdown-item setupDelete py-2 px-3 small text-danger" href="#" data-id="${item.id}"><i class="fa-solid fa-trash-can me-2"></i>ডিলিট করুন</a></li>` : ''}
                         </ul>
@@ -444,9 +445,9 @@ $('#examSetupsTableBody').on('click', '.setupEdit', async function(e) {
     e.preventDefault();
     const id = $(this).data('id');
 
+
     try {
         const res = await axios.get(`/api/exam-setup-details/${id}`);
-
         if (res.data.status === true) {
             const setup = res.data.exam_setup;
             
@@ -488,7 +489,8 @@ $('#examSetupsTableBody').on('click', '.setupView', async function(e) {
     const id = $(this).data('id');
 
     try {
-        const res = await axios.get(`/api/exam-setups/${id}`); // Match route parameters structure
+        const res = await axios.get(`/api/subject-assignment-overviews/${id}`); // Match route parameters structure
+        console.log(res);
         if (res.data.status === true) {
             const examSetup = res.data.exam_setup;
             const groupedData = res.data.grouped_data;

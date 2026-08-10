@@ -34,6 +34,7 @@ class ExamSetupController extends Controller
                 return [
                     'id' => $setup->id,
                     'exam_type' => $setup->examType->name ?? '—',
+                    'class_setup_id' => $setup->class_setup_id,
                     'class_name' => $setup->classSetup->schoolClass->name ?? '—',
                     'section_name' => $setup->classSetup->section->name ?? 'N/A',
                     'shift_name' => $setup->classSetup->shift->name ?? 'N/A',
@@ -140,8 +141,9 @@ class ExamSetupController extends Controller
         }
     }
 
+
     /**
-     * Show detailed Exam Setup along with dynamically calculated rowspan objects for Subject Assignments.
+     * Show detailed Exam Setup along with dynamically loaded subject assignments.
      */
     public function show($id)
     {
@@ -153,43 +155,19 @@ class ExamSetupController extends Controller
                 'classSetup.shift'
             ])->findOrFail($id);
 
-            // Dynamically load active subject assignments mapped under this class setup
+            // Fetch the exact same active subject assignments as the Details component
             $assignments = SubjectAssignment::with(['subject', 'group', 'paper'])
                 ->where('class_setup_id', $examSetup->class_setup_id)
                 ->get();
 
-            // Group assignments to compute rowspan on client side perfectly
-            $groupedSubjects = [];
-            foreach ($assignments as $assignment) {
-                $groupName = $assignment->group->name ?? 'Common';
-                $subjectId = $assignment->subject_id;
-                $subjectName = $assignment->subject->name ?? 'Unknown Subject';
-
-                if (!isset($groupedSubjects[$groupName])) {
-                    $groupedSubjects[$groupName] = [];
-                }
-
-                if (!isset($groupedSubjects[$groupName][$subjectId])) {
-                    $groupedSubjects[$groupName][$subjectId] = [
-                        'subject_name' => $subjectName,
-                        'is_fourth_subject' => (bool)$assignment->is_fourth_subject,
-                        'papers' => []
-                    ];
-                }
-
-                $groupedSubjects[$groupName][$subjectId]['papers'][] = [
-                    'paper_name' => $assignment->paper->name ?? '—',
-                    'code' => $assignment->code ?? '—'
-                ];
-            }
-
             return response()->json([
                 'status' => true,
                 'exam_setup' => $examSetup,
-                'grouped_data' => $groupedSubjects
+                'all_data' => $assignments // Matching your details view data structure!
             ], 200);
 
         } catch (Exception $e) {
+            Log::error('ExamSetup Show Failed: ' . $e->getMessage());
             return response()->json(['status' => false, 'message' => 'রেকর্ডটি খুঁজে পাওয়া যায়নি।'], 404);
         }
     }
