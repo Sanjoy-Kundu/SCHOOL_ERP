@@ -1,8 +1,13 @@
 @push('styles')
+<!-- Select2 CSS and Bootstrap 5 Theme CSS Integration Dependencies -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
+
 <style>
     /* Dynamic responsive design CSS for Workspace Panels */
     @media (max-width: 575.98px) {
-        .card-responsive { border-radius: 12px !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; }
+        .card-responsive { border-radius: 12px !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; padding: 1.25rem !important; }
         .container-responsive { padding-left: 10px !important; padding-right: 10px !important; }
         .title-responsive { font-size: 1.5rem !important; }
     }
@@ -49,6 +54,20 @@
         color: #2b3674;
         font-size: 0.95rem;
     }
+
+    /* Professional Select2 Bootstrap 5 customization to match existing large inputs */
+    .select2-container--bootstrap-5 .select2-selection {
+        min-height: 48px !important;
+        border-radius: 0.5rem !important;
+        display: flex !important;
+        align-items: center !important;
+        border: 1px solid #ced4da !important;
+    }
+    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+        padding-left: 1rem !important;
+        font-size: 1rem !important;
+        color: #2b3674 !important;
+    }
 </style>
 @endpush
 
@@ -63,12 +82,41 @@
     </div>
 
     <div class="row g-4 flex-column-reverse flex-lg-row">
-        <!-- Left Column: Master Table List Card -->
+        <!-- Left Column: Master Table List Card with Server-side Filtering Bar -->
         <div class="col-12 {{ auth()->user()->can('exam_schedules.create') ? 'col-xl-8 col-lg-7' : 'col-xl-12' }}" id="tableCard">
             <div class="card border-0 card-responsive p-3 p-sm-4 bg-white shadow-sm">
                 <h5 class="fw-bold text-dark mb-4">
                     <i class="fa-solid fa-calendar-days text-success me-2"></i>সংরক্ষিত পরীক্ষার সময়সূচী তালিকা
                 </h5>
+
+                <!-- ==========================================================
+                     ADDED FILTER BAR: Mapped dynamically with dependency loaders 
+                     ========================================================== -->
+                <div class="row g-2 mb-4 bg-light p-3 rounded-3 border">
+                    <div class="col-12 col-md-4">
+                        <label class="form-label small fw-bold text-secondary mb-1">পরীক্ষার ধরণ ফিল্টার</label>
+                        <select id="filterExamTypeId" class="form-select form-select-sm rounded-3">
+                            <option value="">সকল পরীক্ষার ধরণ</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label class="form-label small fw-bold text-secondary mb-1">শ্রেণী ফিল্টার (Class)</label>
+                        <select id="filterClassId" class="form-select form-select-sm rounded-3">
+                            <option value="">সকল শ্রেণী</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label class="form-label small fw-bold text-secondary mb-1">শ্রেণীর বিন্যাস ফিল্টার (Class Setup)</label>
+                        <select id="filterClassSetupId" class="form-select form-select-sm rounded-3" disabled>
+                            <option value="">প্রথমে শ্রেণী নির্বাচন করুন...</option>
+                        </select>
+                    </div>
+                    <div class="col-12 text-end mt-2">
+                        <button type="button" id="resetFiltersBtn" class="btn btn-sm btn-outline-secondary px-3 py-1.5 fw-bold rounded-3">
+                            <i class="fa-solid fa-rotate-left me-1"></i>ফিল্টার রিসেট
+                        </button>
+                    </div>
+                </div>
                 
                 <div class="table-responsive">
                     <table id="examSchedulesTable" class="table table-hover align-middle border-0 w-100">
@@ -117,7 +165,7 @@
                         <!-- Exam Type Dropdown -->
                         <div class="mb-3">
                             <label for="examTypeId" class="form-label fw-semibold small text-dark">পরীক্ষার ধরণ (Exam Type) <span class="text-danger">*</span></label>
-                            <select class="form-select form-select-lg rounded-3 fs-6" id="examTypeId" required>
+                            <select class="form-select form-select-lg rounded-3" id="examTypeId" required>
                                 <option value="" selected disabled>পরীক্ষার ধরণ নির্বাচন করুন...</option>
                             </select>
                             <div class="invalid-feedback" id="error-exam-type-id"></div>
@@ -126,7 +174,7 @@
                         <!-- Class Dropdown (Starts Cascade) -->
                         <div class="mb-3">
                             <label for="classId" class="form-label fw-semibold small text-dark">শ্রেণী (Class) <span class="text-danger">*</span></label>
-                            <select class="form-select form-select-lg rounded-3 fs-6" id="classId" required>
+                            <select class="form-select form-select-lg rounded-3" id="classId" required>
                                 <option value="" selected disabled>শ্রেণী নির্বাচন করুন...</option>
                             </select>
                         </div>
@@ -134,7 +182,7 @@
                         <!-- Class Setup Dropdown -->
                         <div class="mb-3">
                             <label for="classSetupId" class="form-label fw-semibold small text-dark">শ্রেণীর বিন্যাস (Class Setup) <span class="text-danger">*</span></label>
-                            <select class="form-select form-select-lg rounded-3 fs-6" id="classSetupId" required disabled>
+                            <select class="form-select form-select-lg rounded-3" id="classSetupId" required disabled>
                                 <option value="" selected disabled>প্রথমে শ্রেণী নির্বাচন করুন...</option>
                             </select>
                             <div class="invalid-feedback" id="error-class-setup-id"></div>
@@ -143,7 +191,7 @@
                         <!-- Subject Assignment Dropdown -->
                         <div class="mb-3">
                             <label for="subjectAssignmentId" class="form-label fw-semibold small text-dark">বিষয় ও পত্র (Subject & Paper) <span class="text-danger">*</span></label>
-                            <select class="form-select form-select-lg rounded-3 fs-6" id="subjectAssignmentId" required disabled>
+                            <select class="form-select form-select-lg rounded-3" id="subjectAssignmentId" required disabled>
                                 <option value="" selected disabled>প্রথমে শ্রেণীর বিন্যাস নির্বাচন করুন...</option>
                             </select>
                             <div class="invalid-feedback" id="error-subject-assignment-id"></div>
@@ -325,8 +373,11 @@
 
 
 @push('scripts')
+<!-- Select2 JavaScript dependency -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
-// Scoped JavaScript execution to prevent global variable bleeding
+// Scoped JavaScript execution to prevent global variable bleeding 
 {
     const canCreateSchedule = @json(auth()->user()->can('exam_schedules.create'));
     const canEditSchedule = @json(auth()->user()->can('exam_schedules.edit'));
@@ -378,8 +429,11 @@
                         <strong>${item.subject_name}</strong>
                         ${paperText}
                     </td>
-                    <td><span class="badge bg-light text-dark border px-3 py-2 fw-semibold">${banglaDate}</span></td>
-                    <td class="small text-secondary">${item.start_time} - ${item.end_time}</td>
+                    <td>
+                        <!-- Stacked Date Badge and Time Range inside single TD cell to match exactly 10 columns count -->
+                        <span class="badge bg-light text-dark border px-3 py-1.5 fw-semibold mb-1 d-inline-block">${banglaDate}</span>
+                        <span class="text-muted d-block small">${convertToBanglaNumber(item.start_time)} - ${convertToBanglaNumber(item.end_time)}</span>
+                    </td>
                     <td><strong class="text-success">${item.room_name}</strong></td>
                     <td>
                         <span class="badge ${item.status ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'} px-3 py-2 rounded-pill fw-bold">
@@ -415,71 +469,110 @@
         });
     }
 
-    // Load active setups configuration list
+    // Dynamic Filter Trigger handler 
     async function loadSchedulesList() {
-        let schedules = [];
         if ($.fn.DataTable.isDataTable('#examSchedulesTable')) {
             $('#examSchedulesTable').DataTable().destroy();
         }
 
+        // Collect filter parameters dynamically 
+        const examTypeId = $('#filterExamTypeId').val();
+        const classId = $('#filterClassId').val();
+        const classSetupId = $('#filterClassSetupId').val();
+
         try {
-            const response = await axios.get('/api/exam-schedule-lists');
+            // FIXED: Axios dynamic payload query request pipeline mapped cleanly 
+            const response = await axios.get('/api/exam-schedule-lists', {
+                params: {
+                    exam_type_id: examTypeId,
+                    class_id: classId,
+                    class_setup_id: classSetupId
+                }
+            });
             if (response.data?.status && response.data?.all_data) {
-                schedules = response.data.all_data;
+                renderExamSchedules(response.data.all_data);
+                initializeDataTable();
             }
         } catch (error) {
             console.warn('Failed to load exam schedules.');
         }
-
-        renderExamSchedules(schedules);
-        initializeDataTable();
     }
 
-    // Fetch master dropdown dynamic structures
+    // Fetch master dropdown dependency structures and dynamic filter selectors
     async function loadFormDropdowns() {
         try {
-            // Hit the newly mapped dedicated schedules endpoint to avoid conflicts [cite: 1.1.2]
             const response = await axios.get('/api/exam-schedule-dependencies');
             if (response.data?.status) {
-                // Populate Exam Types
+                // Populate Form Exam Types
                 let typeOptions = '<option value="" selected disabled>পরীক্ষার ধরণ নির্বাচন করুন...</option>';
+                let filterTypeOptions = '<option value="">সকল পরীক্ষার ধরণ (All Exam Types)</option>'; // Dynamic Filter values 
+                
                 response.data.exam_types.forEach(item => {
                     typeOptions += `<option value="${item.id}">${item.name}</option>`;
+                    filterTypeOptions += `<option value="${item.id}">${item.name}</option>`; // Mapped with Name for search index 
                 });
                 $('#examTypeId').html(typeOptions);
+                $('#filterExamTypeId').html(filterTypeOptions); // Populated 
 
-                // Populate School Classes
+                // Populate School Classes and Filter Classes
                 let classOptions = '<option value="" selected disabled>শ্রেণী নির্বাচন করুন...</option>';
+                let filterClassOptions = '<option value="">সকল শ্রেণী (All Classes)</option>'; // Mapped with Classes filter 
+
                 response.data.classes.forEach(item => {
                     classOptions += `<option value="${item.id}">${item.name}</option>`;
+                    filterClassOptions += `<option value="${item.id}">${item.name}</option>`; // Mapped 
                 });
                 $('#classId').html(classOptions);
+                $('#filterClassId').html(filterClassOptions); // Populated 
             }
         } catch (error) {
             console.warn('Failed to load dropdown dependencies.');
         }
     }
 
-    // Dynamic Cascading Dropdown: Class -> Class Setup
-    $('#classId').on('change', async function() {
+    // Dynamic Cascading Dropdown: Class -> Class Setup (Both Form and Filter UI) 
+    $(document).on('change', '#classId, #filterClassId', async function() {
+        const isFilterTrigger = $(this).attr('id') === 'filterClassId';
         const classId = $(this).val();
-        const classSetupSelect = $('#classSetupId');
+
+        const targetSetupSelect = isFilterTrigger ? $('#filterClassSetupId') : $('#classSetupId');
         const subjectAssignSelect = $('#subjectAssignmentId');
 
-        classSetupSelect.prop('disabled', true).html('<option value="">লোড হচ্ছে...</option>');
-        subjectAssignSelect.prop('disabled', true).html('<option value="" selected disabled>প্রথমে শ্রেণীর বিন্যাস নির্বাচন করুন...</option>');
+        targetSetupSelect.prop('disabled', true).html('<option value="">লোড হচ্ছে...</option>');
+        
+        if (!isFilterTrigger) {
+            subjectAssignSelect.prop('disabled', true).html('<option value="" selected disabled>প্রথমে শ্রেণীর বিন্যাস নির্বাচন করুন...</option>');
+            if ($.fn.select2) {
+                subjectAssignSelect.trigger('change'); 
+            }
+        }
+
+        // Handle empty filter selectors gracefully 
+        if (!classId && isFilterTrigger) {
+            targetSetupSelect.html('<option value="">প্রথমে শ্রেণী নির্বাচন করুন...</option>');
+            loadSchedulesList(); // Trigger instant filtering update on empty reset 
+            return;
+        }
 
         try {
             const res = await axios.get(`/api/academic/exam-schedules/class-setups/${classId}`);
             if (res.data?.status) {
-                let options = '<option value="" selected disabled>শ্রেণীর বিন্যাস নির্বাচন করুন...</option>';
+                let options = isFilterTrigger 
+                    ? '<option value="">সকল শ্রেণীর বিন্যাস (All Class Setups)</option>'
+                    : '<option value="" selected disabled>শ্রেণীর বিন্যাস নির্বাচন করুন...</option>';
+
                 res.data.class_setups.forEach(item => {
                     options += `<option value="${item.id}">${item.label}</option>`;
                 });
-                classSetupSelect.html(options).prop('disabled', false);
+                targetSetupSelect.html(options).prop('disabled', false);
+
+                // Auto reload lists on Filter selection change 
+                if (isFilterTrigger) {
+                    loadSchedulesList();
+                }
             }
         } catch (error) {
-            classSetupSelect.html('<option value="">লোড ব্যর্থ হয়েছে!</option>');
+            targetSetupSelect.html('<option value="">লোড ব্যর্থ হয়েছে!</option>');
         }
     });
 
@@ -489,6 +582,9 @@
         const subjectAssignSelect = $('#subjectAssignmentId');
 
         subjectAssignSelect.prop('disabled', true).html('<option value="">লোড হচ্ছে...</option>');
+        if ($.fn.select2) {
+            subjectAssignSelect.trigger('change'); 
+        }
 
         try {
             const res = await axios.get(`/api/academic/exam-schedules/subject-assignments/${setupId}`);
@@ -497,15 +593,18 @@
                 if (res.data.subject_assignments.length === 0) {
                     options = '<option value="">No subject assigned for this class setup.</option>';
                     subjectAssignSelect.html(options);
+                    if ($.fn.select2) subjectAssignSelect.trigger('change');
                     return;
                 }
                 res.data.subject_assignments.forEach(item => {
                     options += `<option value="${item.id}">${item.label}</option>`;
                 });
                 subjectAssignSelect.html(options).prop('disabled', false);
+                if ($.fn.select2) subjectAssignSelect.trigger('change'); 
             }
         } catch (error) {
             subjectAssignSelect.html('<option value="">লোড ব্যর্থ হয়েছে!</option>');
+            if ($.fn.select2) subjectAssignSelect.trigger('change');
         }
     });
 
@@ -516,6 +615,9 @@
         $('#classId').val('').removeClass('is-invalid');
         $('#classSetupId').prop('disabled', true).html('<option value="" selected disabled>প্রথমে শ্রেণী নির্বাচন করুন...</option>').removeClass('is-invalid');
         $('#subjectAssignmentId').prop('disabled', true).html('<option value="" selected disabled>প্রথমে শ্রেণীর বিন্যাস নির্বাচন করুন...</option>').removeClass('is-invalid');
+        if ($.fn.select2) {
+            $('#subjectAssignmentId').trigger('change'); 
+        }
         
         $('#examDate').val('').removeClass('is-invalid');
         $('#startTime').val('').removeClass('is-invalid');
@@ -686,6 +788,9 @@
                             options += `<option value="${item.id}">${item.label}</option>`;
                         });
                         subjectAssignSelect.html(options).prop('disabled', false).val(schedule.subject_assignment_id);
+                        if ($.fn.select2) {
+                            subjectAssignSelect.trigger('change'); 
+                        }
                     })
                     .catch(() => {
                         classSetupSelect.html('<option value="">লোড ব্যর্থ!</option>');
@@ -701,8 +806,7 @@
                 $('#instructions').val(schedule.instructions);
                 $('#status').prop('checked', schedule.status == 1);
 
-                // Replaced edit background emphasis color with standard brand color to maintain visual consistency
-                $('#submitBtn').text('হালনাগাদ সম্পন্ন করুন').css('background-color', '#004d40');
+                $('#submitBtn').text('হালনাগাদ সম্পন্ন করুন').css('background-color', '#1a237e'); // Editing emphasis color
                 $('#resetBtn').show(); 
                 
                 // Scroll smoothly to form card
@@ -732,7 +836,7 @@
 
                 // Bind Master Meta labels
                 $('#viewExamType').text(s.exam_type?.name || '—');
-                $('#viewClassName').text(s.class_setup?.class?.name || '—'); // Fixed: Resolved relationship path safely
+                $('#viewClassName').text(s.class_setup?.class?.name || '—');
                 $('#viewSectionName').text(s.class_setup?.section?.name || 'N/A');
                 $('#viewShiftName').text(s.class_setup?.shift?.name || 'N/A');
                 $('#viewGroupName').text(s.subject_assignment?.group?.name || 'Compulsory');
@@ -740,9 +844,7 @@
                 // Bind Subject metadata
                 $('#viewSubjectName').text(s.subject_assignment?.subject?.name || '—');
                 $('#viewPaperName').text(s.subject_assignment?.paper?.name || '—');
-                
-                // Fixed: Stripped out convertToBanglaNumber helper on string type code representation
-                $('#viewSubjectCode').text(s.subject_assignment?.code || '—');
+                $('#viewSubjectCode').text(convertToBanglaNumber(s.subject_assignment?.code) || '—');
 
                 const isFourth = s.subject_assignment?.is_fourth_subject ? '<span class="badge bg-warning text-dark">হ্যাঁ</span>' : '<span class="badge bg-light text-dark border">না</span>';
                 $('#viewIsFourth').html(isFourth);
@@ -758,8 +860,6 @@
                 // Bind seating resources details
                 $('#viewRoomName').text(s.room_name || '—');
                 $('#viewExaminerName').text(s.examiner_name || '—');
-                
-                // Fixed: Handled integer seat capacity conversion safely
                 $('#viewSeatCapacity').text(convertToBanglaNumber(s.seat_capacity) || '—');
 
                 // Render instructions gracefully
@@ -780,6 +880,20 @@
                 confirmButtonColor: '#004d40'
             });
         }
+    });
+
+    // Handle AJAX-based live server-side filtering on selection change 
+    $(document).on('change', '#filterExamTypeId, #filterClassSetupId', function() {
+        loadSchedulesList();
+    });
+
+    // Reset Filters button action mapping 
+    $('#resetFiltersBtn').on('click', function() {
+        $('#filterExamTypeId').val('');
+        $('#filterClassId').val('');
+        $('#filterClassSetupId').prop('disabled', true).html('<option value="">প্রথমে শ্রেণী নির্বাচন করুন...</option>');
+        
+        loadSchedulesList(); // Trigger lists re-fetch without filter payloads 
     });
 
     // Delete Button Click Event Delegation (SweetAlert2 + Without Reload)
@@ -829,9 +943,18 @@
 
     // Load details on document ready
     $(document).ready(function () {
+        // Initialize Select2 with Bootstrap 5 theme
+        $('#subjectAssignmentId').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'বিষয় ও পত্র নির্বাচন করুন...',
+            allowClear: true,
+            dropdownParent: $('#formCard') 
+        });
+
         loadFormDropdowns();
         loadSchedulesList();
     });
 }
 </script>
 @endpush
+

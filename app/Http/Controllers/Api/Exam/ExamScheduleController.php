@@ -17,31 +17,50 @@ use Illuminate\Support\Facades\Validator;
 
 class ExamScheduleController extends Controller
 {
-     /**
-     * Fetch all schedules with formatted relationships.
+      /**
+     * Fetch all schedules with formatted relationships and dynamic server-side filters.
      */
-    public function index()
+    public function index(Request $request)
     {
         Gate::authorize('exam_schedules.view');
 
         try {
-            // Fixed: Changed eager loading target from 'schoolClass' to 'class' to match model definition
-            $schedules = ExamSchedule::with([
+            // Eager load related configurations 
+            $query = ExamSchedule::with([
                 'examType',
-                'classSetup.class', 
+                'classSetup.schoolClass', 
                 'classSetup.section',
                 'classSetup.shift',
                 'subjectAssignment.subject',
                 'subjectAssignment.paper',
                 'subjectAssignment.group'
-            ])->get();
+            ]);
+
+            // 1. Dynamic Filter: Exam Type
+            if ($request->filled('exam_type_id')) {
+                $query->where('exam_type_id', $request->exam_type_id);
+            }
+
+            // 2. Dynamic Filter: Class (Resolved through class_setup relationship path) 
+            if ($request->filled('class_id')) {
+                $query->whereHas('classSetup', function ($q) use ($request) {
+                    $q->where('class_id', $request->class_id);
+                });
+            }
+
+            // 3. Dynamic Filter: Class Setup Configuration
+            if ($request->filled('class_setup_id')) {
+                $query->where('class_setup_id', $request->class_setup_id);
+            }
+
+            $schedules = $query->get();
 
             $formatted = $schedules->map(function ($schedule) {
-                // Safely resolve nested optional master datasets using null-safe operators 
                 return [
                     'id' => $schedule->id,
                     'exam_type' => $schedule->examType->name ?? '—',
-                    'class_name' => $schedule->classSetup?->class?->name ?? '—',
+                    'class_setup_id' => $schedule->class_setup_id,
+                    'class_name' => $schedule->classSetup?->schoolClass?->name ?? '—',
                     'section_name' => $schedule->classSetup?->section?->name ?? 'N/A',
                     'shift_name' => $schedule->classSetup?->shift?->name ?? 'N/A',
                     'group_name' => $schedule->subjectAssignment?->group?->name ?? 'Compulsory',
@@ -98,7 +117,6 @@ class ExamScheduleController extends Controller
                 ->get();
 
             $formatted = $classSetups->map(function ($setup) {
-                // Fixed: Implemented PHP 8+ Null-safe operators to prevent fatal property access on null errors 
                 $sectionName = $setup->section?->name ?? 'N/A';
                 $shiftName = $setup->shift?->name ?? 'N/A';
                 return [
@@ -129,7 +147,6 @@ class ExamScheduleController extends Controller
                 ->get();
 
             $formatted = $assignments->map(function ($assign) {
-                // Safely resolve nullable parent properties using null-safe operators 
                 $paperText = $assign->paper ? " ({$assign->paper->name})" : '';
                 $groupText = $assign->group ? " [{$assign->group->name} Group]" : '';
                 $fourthText = $assign->is_fourth_subject ? " [Fourth Subject]" : '';
@@ -178,7 +195,6 @@ class ExamScheduleController extends Controller
         try {
             DB::beginTransaction();
 
-            // 1. Verify Subject Assignment matches chosen Class Setup
             $validAssignment = SubjectAssignment::where('id', $request->subject_assignment_id)
                 ->where('class_setup_id', $request->class_setup_id)
                 ->exists();
@@ -187,7 +203,6 @@ class ExamScheduleController extends Controller
                 return response()->json(['status' => false, 'message' => 'নির্বাচিত বিষয়টি এই শ্রেণী বিন্যাসের অন্তর্ভুক্ত নয়।'], 422);
             }
 
-            // 2. Duplicate Check: exam_type + class_setup + subject_assignment combo uniqueness
             $exists = ExamSchedule::where('exam_type_id', $request->exam_type_id)
                 ->where('class_setup_id', $request->class_setup_id)
                 ->where('subject_assignment_id', $request->subject_assignment_id)
@@ -197,7 +212,6 @@ class ExamScheduleController extends Controller
                 return response()->json(['status' => false, 'message' => 'এই বিষয়ের জন্য এই পরীক্ষা বিন্যাসটি ইতিমধ্যে তৈরি করা আছে।'], 422);
             }
 
-            // 3. Time Overlap check for the same Class Setup
             $classOverlap = ExamSchedule::where('class_setup_id', $request->class_setup_id)
                 ->where('exam_date', $request->exam_date)
                 ->where(function ($q) use ($request) {
@@ -210,7 +224,6 @@ class ExamScheduleController extends Controller
                 return response()->json(['status' => false, 'message' => 'এই শ্রেণীর জন্য একই সময়ে আরেকটি পরীক্ষা ইতিমধ্যে নির্ধারিত আছে।'], 422);
             }
 
-            // 4. Room Occupancy Overlap Conflict check
             if ($request->filled('room_name')) {
                 $roomOverlap = ExamSchedule::where('room_name', $request->room_name)
                     ->where('exam_date', $request->exam_date)
@@ -262,10 +275,9 @@ class ExamScheduleController extends Controller
         Gate::authorize('exam_schedules.view');
 
         try {
-            // Fixed: Changed eager loading target from 'schoolClass' to 'class' to match model definition
             $schedule = ExamSchedule::with([
                 'examType',
-                'classSetup.class', 
+                'classSetup.schoolClass', 
                 'classSetup.section',
                 'classSetup.shift',
                 'subjectAssignment.subject',
@@ -273,7 +285,6 @@ class ExamScheduleController extends Controller
                 'subjectAssignment.group'
             ])->findOrFail($id);
 
-            // Reconstruct time format elegantly
             $schedule->formatted_start = date('H:i', strtotime($schedule->start_time));
             $schedule->formatted_end = date('H:i', strtotime($schedule->end_time));
 
@@ -317,7 +328,6 @@ class ExamScheduleController extends Controller
 
             $schedule = ExamSchedule::findOrFail($id);
 
-            // 1. Verify Subject Assignment matches chosen Class Setup
             $validAssignment = SubjectAssignment::where('id', $request->subject_assignment_id)
                 ->where('class_setup_id', $request->class_setup_id)
                 ->exists();
@@ -326,7 +336,6 @@ class ExamScheduleController extends Controller
                 return response()->json(['status' => false, 'message' => 'নির্বাচিত বিষয়টি এই শ্রেণী বিন্যাসের অন্তর্ভুক্ত নয়।'], 422);
             }
 
-            // 2. Duplicate Check excluding current ID
             $exists = ExamSchedule::where('exam_type_id', $request->exam_type_id)
                 ->where('class_setup_id', $request->class_setup_id)
                 ->where('subject_assignment_id', $request->subject_assignment_id)
@@ -337,7 +346,6 @@ class ExamScheduleController extends Controller
                 return response()->json(['status' => false, 'message' => 'এই বিষয়ের জন্য এই পরীক্ষা বিন্যাসটি ইতিমধ্যে তৈরি করা আছে।'], 422);
             }
 
-            // 3. Time Overlap check for the same Class Setup excluding current ID
             $classOverlap = ExamSchedule::where('class_setup_id', $request->class_setup_id)
                 ->where('exam_date', $request->exam_date)
                 ->where('id', '!=', $id)
@@ -351,7 +359,6 @@ class ExamScheduleController extends Controller
                 return response()->json(['status' => false, 'message' => 'এই শ্রেণীর জন্য একই সময়ে আরেকটি পরীক্ষা ইতিমধ্যে নির্ধারিত আছে।'], 422);
             }
 
-            // 4. Room Occupancy Overlap Conflict check excluding current ID
             if ($request->filled('room_name')) {
                 $roomOverlap = ExamSchedule::where('room_name', $request->room_name)
                     ->where('exam_date', $request->exam_date)
