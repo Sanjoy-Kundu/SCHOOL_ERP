@@ -11,20 +11,24 @@ use App\Models\SubjectAssignment;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class ExamScheduleController extends Controller
 {
-/**
+     /**
      * Fetch all schedules with formatted relationships.
      */
     public function index()
     {
+        Gate::authorize('exam_schedules.view');
+
         try {
+            // Fixed: Changed eager loading target from 'schoolClass' to 'class' to match model definition
             $schedules = ExamSchedule::with([
                 'examType',
-                'classSetup.schoolClass',
+                'classSetup.class', 
                 'classSetup.section',
                 'classSetup.shift',
                 'subjectAssignment.subject',
@@ -33,15 +37,16 @@ class ExamScheduleController extends Controller
             ])->get();
 
             $formatted = $schedules->map(function ($schedule) {
+                // Safely resolve nested optional master datasets using null-safe operators 
                 return [
                     'id' => $schedule->id,
                     'exam_type' => $schedule->examType->name ?? '—',
-                    'class_name' => $schedule->classSetup->schoolClass->name ?? '—',
-                    'section_name' => $schedule->classSetup->section->name ?? 'N/A',
-                    'shift_name' => $schedule->classSetup->shift->name ?? 'N/A',
-                    'group_name' => $schedule->subjectAssignment->group->name ?? 'Compulsory',
-                    'subject_name' => $schedule->subjectAssignment->subject->name ?? '—',
-                    'paper_name' => $schedule->subjectAssignment->paper->name ?? '—',
+                    'class_name' => $schedule->classSetup?->class?->name ?? '—',
+                    'section_name' => $schedule->classSetup?->section?->name ?? 'N/A',
+                    'shift_name' => $schedule->classSetup?->shift?->name ?? 'N/A',
+                    'group_name' => $schedule->subjectAssignment?->group?->name ?? 'Compulsory',
+                    'subject_name' => $schedule->subjectAssignment?->subject?->name ?? '—',
+                    'paper_name' => $schedule->subjectAssignment?->paper?->name ?? '—',
                     'exam_date' => $schedule->exam_date->format('Y-m-d'),
                     'start_time' => date('h:i A', strtotime($schedule->start_time)),
                     'end_time' => date('h:i A', strtotime($schedule->end_time)),
@@ -93,8 +98,9 @@ class ExamScheduleController extends Controller
                 ->get();
 
             $formatted = $classSetups->map(function ($setup) {
-                $sectionName = $setup->section->name ?? 'N/A';
-                $shiftName = $setup->shift->name ?? 'N/A';
+                // Fixed: Implemented PHP 8+ Null-safe operators to prevent fatal property access on null errors 
+                $sectionName = $setup->section?->name ?? 'N/A';
+                $shiftName = $setup->shift?->name ?? 'N/A';
                 return [
                     'id' => $setup->id,
                     'label' => "Section: {$sectionName} - Shift: {$shiftName}"
@@ -123,12 +129,14 @@ class ExamScheduleController extends Controller
                 ->get();
 
             $formatted = $assignments->map(function ($assign) {
+                // Safely resolve nullable parent properties using null-safe operators 
                 $paperText = $assign->paper ? " ({$assign->paper->name})" : '';
                 $groupText = $assign->group ? " [{$assign->group->name} Group]" : '';
                 $fourthText = $assign->is_fourth_subject ? " [Fourth Subject]" : '';
+                
                 return [
                     'id' => $assign->id,
-                    'label' => "{$assign->subject->name}{$paperText}{$groupText}{$fourthText}"
+                    'label' => "{$assign->subject?->name}{$paperText}{$groupText}{$fourthText}"
                 ];
             });
 
@@ -147,6 +155,8 @@ class ExamScheduleController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('exam_schedules.create');
+
         $validator = Validator::make($request->all(), [
             'exam_type_id' => 'required|exists:exam_types,id',
             'class_setup_id' => 'required|exists:class_setups,id',
@@ -249,10 +259,13 @@ class ExamScheduleController extends Controller
      */
     public function show($id)
     {
+        Gate::authorize('exam_schedules.view');
+
         try {
+            // Fixed: Changed eager loading target from 'schoolClass' to 'class' to match model definition
             $schedule = ExamSchedule::with([
                 'examType',
-                'classSetup.schoolClass',
+                'classSetup.class', 
                 'classSetup.section',
                 'classSetup.shift',
                 'subjectAssignment.subject',
@@ -279,6 +292,8 @@ class ExamScheduleController extends Controller
      */
     public function update(Request $request, $id)
     {
+        Gate::authorize('exam_schedules.edit');
+
         $validator = Validator::make($request->all(), [
             'exam_type_id' => 'required|exists:exam_types,id',
             'class_setup_id' => 'required|exists:class_setups,id',
@@ -385,6 +400,8 @@ class ExamScheduleController extends Controller
      */
     public function destroy($id)
     {
+        Gate::authorize('exam_schedules.delete');
+
         try {
             DB::beginTransaction();
 

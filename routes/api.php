@@ -218,7 +218,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
      /*--------------------------------------------------
-      Exam Schedule API Routes - FIXED: Fully Mapped [cite: 19]
+      Exam Schedule API Routes - FIXED: Fully Mapped 
     ---------------------------------------------------*/
     Route::controller(ExamScheduleController::class)->group(function () {
         Route::get('/exam-schedule-lists', 'index')->name('api.exam-schedules.index');
@@ -227,7 +227,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/exam-schedule-update/{id}', 'update')->name('api.exam-schedules.update');
         Route::delete('/exam-schedule-delete/{id}', 'destroy')->name('api.exam-schedules.destroy');
 
-      
+        Route::get('/exam-schedule-dependencies', 'getFormDependencies')->name('api.exam-schedules.dependencies');
         Route::get('/academic/exam-schedules/class-setups/{classId}', 'getClassSetups')->name('api.exam-schedules.class-setups');
         Route::get('/academic/exam-schedules/subject-assignments/{classSetupId}', 'getSubjectAssignments')->name('api.exam-schedules.subject-assignments');
     });
