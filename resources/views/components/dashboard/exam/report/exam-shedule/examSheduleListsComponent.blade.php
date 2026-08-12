@@ -18,6 +18,31 @@
         .card-responsive { border-radius: 20px !important; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06) !important; }
     }
 
+    /* Screen UI Layout Adjustments for Header Metadata */
+    #routineReportWrapper .border-bottom {
+        border-bottom: 2px solid #2d3436 !important;
+    }
+    #routineReportWrapper h4 {
+        font-size: 1.6rem !important;
+        color: #2d3436 !important;
+    }
+    #routineReportWrapper h6 {
+        font-size: 1.05rem !important;
+        color: #636e72 !important;
+        margin-top: 8px;
+    }
+    /* Dynamic centered styling for the metadata subtitle line */
+    #routineReportWrapper span.text-black {
+        font-size: 1rem !important;
+        color: #2d3436 !important;
+        display: inline-block;
+        margin-top: 8px;
+        font-family: 'Kalpurush', 'SolaimanLipi', sans-serif;
+    }
+    #routineReportWrapper strong {
+        color: black !important;
+    }
+
     /* Traditional Bangladeshi High School Academic Table Style */
     .custom-academic-table {
         border-collapse: collapse;
@@ -49,56 +74,176 @@
         border-right: 2px solid #b2bec3 !important;
     }
 
-    .meta-label {
-        font-weight: 500;
-        color: #636e72;
-        font-size: 0.85rem;
-    }
-    .meta-value {
-        font-weight: 700;
-        color: #2d3436;
-        font-size: 1.1rem;
-    }
-
-    /* Print Optimization CSS Stylesheet to exactly match the target layout */
+    /* Print Optimization CSS Stylesheet for Professional Multi-Page Routines */
     @media print {
-        body {
+        /* Reset document body and canvas */
+        html, body {
             background-color: #fff !important;
             color: #000 !important;
-        }
-        .container-responsive {
-            padding: 0 !important;
-            margin: 0 !important;
-            max-width: 100% !important;
+            font-size: 11px !important;
             width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
         }
-        .card-responsive {
+
+        /* Prevent parent container elements from clipping table height */
+        #wrapper, 
+        .main-content, 
+        .content-wrapper, 
+        #tableCard, 
+        .container, 
+        .container-fluid, 
+        .container-responsive {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+            position: relative !important;
+            float: none !important;
+            height: auto !important;
+            min-height: auto !important;
+            background: none !important;
             box-shadow: none !important;
             border: none !important;
-            padding: 0 !important;
         }
-        .d-print-none {
+
+        /* Dynamically hide Laravel sidebars, navbars, filters and web elements */
+        .d-print-none,
+        .sidebar,
+        .main-sidebar,
+        .navbar,
+        .main-header,
+        .main-footer,
+        .breadcrumb,
+        .card:not(#routineReportWrapper),
+        .btn,
+        select,
+        input,
+        label,
+        .spinner-border,
+        #emptyStateMessage {
             display: none !important;
         }
+
+        /* Printable Report Outer Wrapper Configuration */
+        #routineReportWrapper {
+            display: block !important;
+            visibility: visible !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 10mm 15mm 15mm 15mm !important;
+            box-shadow: none !important;
+            border: none !important;
+            background: transparent !important;
+        }
+
+        /* School Pad Header Styling for printing */
+        .text-center.mb-4.pb-3.border-bottom {
+            margin-bottom: 20px !important;
+            padding-bottom: 15px !important;
+            border-bottom: 2px solid #000 !important;
+        }
+
+        /* Highlight specific school colors during print */
+        #routineReportWrapper strong {
+            color: #000 !important;
+            font-weight: bold !important;
+        }
+
+        /* Setup academic table print specifications */
         .custom-academic-table {
             width: 100% !important;
+            max-width: 100% !important;
             border-collapse: collapse !important;
+            overflow: visible !important;
+            margin-top: 25px !important;
         }
-        .custom-academic-table th, 
-        .custom-academic-table td {
-            border: 1px solid #000 !important;
-            padding: 8px !important;
-            font-size: 0.85rem !important;
+
+        /* Ensure table header repeats cleanly on every printed page */
+        .custom-academic-table thead {
+            display: table-header-group !important;
+        }
+
+        .custom-academic-table thead th {
+            background-color: #f2f2f2 !important;
             color: #000 !important;
+            border: 1px solid #000 !important;
+            padding: 8px 6px !important;
+            font-size: 11px !important;
+            font-weight: bold !important;
+            text-align: center !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
+
+        /* Cell spacing and wrap alignments */
+        .custom-academic-table tbody td {
+            border: 1px solid #000 !important;
+            padding: 7px 6px !important;
+            font-size: 10.5px !important;
+            color: #000 !important;
+            vertical-align: middle !important;
+            background-color: transparent !important;
+            white-space: normal !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+
+        /* Rowspan formatting protection */
+        .custom-academic-table td[rowspan] {
+            border: 1px solid #000 !important;
+            border-right: 2px solid #000 !important;
+            font-weight: bold !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            background-color: #fff !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Prevent split rows across pages */
+        tr {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+
+        /* Remove Bootstrap table overflow scrolling limits */
+        .table-responsive {
+            overflow: visible !important;
+            display: block !important;
+            width: 100% !important;
+        }
+
+        /* Signature area formatting */
+        .signature-section {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            margin-top: 70px !important;
+            width: 100% !important;
+        }
+
         .signature-section hr {
-            border-top: 1px solid #000 !important;
+            border-top: 1.5px solid #000 !important;
             opacity: 1 !important;
+            margin-bottom: 5px !important;
+        }
+
+        .signature-section span {
+            color: #000 !important;
+            font-weight: bold !important;
+        }
+
+        /* Page standard format */
+        @page {
+            size: A4 portrait;
+            margin: 15mm;
         }
     }
 </style>
 @endpush
-
 <div class="container container-responsive py-4">
     <!-- Page Header -->
     <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2 d-print-none">
@@ -519,3 +664,9 @@
 }
 </script>
 @endpush
+
+
+
+
+
+ 
