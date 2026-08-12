@@ -23,4 +23,19 @@ class ReportPrintController extends Controller
             ], 500);
         }
     }
+    /**
+     * Render the centralized master exam shedule lists print view.
+     */
+    public function examSheduleListPrint()
+    {
+        try{
+        // Points to the future printable subject map page 
+        return view('pages.dashboard.exam.reports.examSheduleListsPrintPage');
+        }catch (Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

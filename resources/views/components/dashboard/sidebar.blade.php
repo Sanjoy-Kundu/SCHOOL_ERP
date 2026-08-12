@@ -425,7 +425,7 @@
                     <!-- Academic Reports Sub-group -->
                     <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-2 mb-1" style="font-size: 10px; letter-spacing: 0.5px;">Academic</li>
                     <li>
-                        <!-- Subject Lists (Dynamic Overview & Printable Report Page) -->
+                        <!-- Subject Lists (Dynamic Overview & Printable Report Page)  -->
                         <a href="{{ url('/academic-subject-list-print') }}" class="submenu-link {{ request()->is('academic-subject-list-print*') ? 'active' : '' }}">
                             <i class="fa-solid fa-book-open me-2"></i>Subject Lists
                         </a>
@@ -451,6 +451,21 @@
                             <i class="fa-solid fa-id-card me-2"></i>ID Card Print
                         </a>
                     </li>
+
+
+                <!-- Examinations -->
+                <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-3 mb-1"
+                    style="font-size: 10px; letter-spacing: 0.5px;">
+                    Examinations
+                </li>
+
+                <li>
+                    <a href="{{url('/academic-examination-shedule-lists-print')}}"
+                    class="submenu-link {{ request()->is('academic-examination-shedule-lists-print*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-calendar-check me-2"></i>
+                        Exam Schedule
+                    </a>
+                </li>
                 </ul>
             </div>
         </li>

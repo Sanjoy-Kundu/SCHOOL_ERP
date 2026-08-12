@@ -107,4 +107,7 @@ class SchoolInformation extends Model
         }
         return asset('images/defaults/favicon.ico');
     }
+
+
+
 }

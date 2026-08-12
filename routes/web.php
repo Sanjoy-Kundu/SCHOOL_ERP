@@ -104,6 +104,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
    * ----------------------------------------------------------------
    */
   Route::get('/academic-subject-list-print', [ReportPrintController::class, 'subjectListPrint'])->name('academic-subject-list-print');
+  Route::get('/academic-examination-shedule-lists-print', [ReportPrintController::class, 'examSheduleListPrint'])->name('academic-examination-shedule-lists-print');
 
   /**
    * ----------------------------------------------------------------
