@@ -6,16 +6,20 @@
     /* Enforce strictly vertical column structure across all devices */
     #sidebar .sidebar-menu {
         display: flex !important;
-        flex-direction: column !important; /* Forces strict vertical column flow */
-        flex-wrap: nowrap !important;      /* Prevents items from wrapping horizontally */
+        flex-direction: column !important;
+        /* Forces strict vertical column flow */
+        flex-wrap: nowrap !important;
+        /* Prevents items from wrapping horizontally */
         list-style: none !important;
         padding: 1rem 0.75rem !important;
         margin: 0 !important;
     }
 
     #sidebar .sidebar-menu li {
-        width: 100% !important;            /* Each menu item takes full sidebar width */
-        display: block !important;         /* Lock as block element for stacking */
+        width: 100% !important;
+        /* Each menu item takes full sidebar width */
+        display: block !important;
+        /* Lock as block element for stacking */
     }
 
     /* Dynamic active navigation indicator style */
@@ -23,16 +27,20 @@
         color: var(--primary-color) !important;
         font-weight: 700 !important;
     }
+
     #sidebar .sidebar-link.active-group i {
         color: var(--primary-color) !important;
     }
+
     #sidebar .submenu-link.active {
         color: var(--primary-color) !important;
         font-weight: 700 !important;
     }
+
     #sidebar .submenu-link.active i {
         color: var(--primary-color) !important;
     }
+
     #sidebar .sidebar-link[aria-expanded="true"] .transition-icon {
         transform: rotate(180deg);
         color: var(--primary-color) !important;
@@ -52,22 +60,23 @@
     <ul class="sidebar-menu flex-grow-1 nav nav-pills flex-column px-2">
         <!-- MODULE 1: DASHBOARD -->
         <li>
-            <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <a href="{{ route('dashboard') }}"
+                class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                 <i class="fa-solid fa-gauge me-3"></i>Dashboard
             </a>
         </li>
 
-        <li><hr class="border-white border-opacity-10 my-2"></li>
+        <li>
+            <hr class="border-white border-opacity-10 my-2">
+        </li>
 
         <!-- MODULE 2: ACADEMIC -->
         <li>
             <!-- Keep Academic parent active for academic submenus, excluding reports/overviews -->
-            <a href="#academicCollapse" 
-            class="sidebar-link d-flex justify-content-between align-items-center {{ (request()->is('academic-*') && !request()->is('academic-subject-assignment-overview*')) ? 'active-group' : '' }}"
-            data-bs-toggle="collapse" 
-            data-bs-target="#academicCollapse"
-            role="button"
-            aria-expanded="{{ (request()->is('academic-*') && !request()->is('academic-subject-assignment-overview*')) ? 'true' : 'false' }}">
+            <a href="#academicCollapse"
+                class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('academic-*') && !request()->is('academic-subject-assignment-overview*') ? 'active-group' : '' }}"
+                data-bs-toggle="collapse" data-bs-target="#academicCollapse" role="button"
+                aria-expanded="{{ request()->is('academic-*') && !request()->is('academic-subject-assignment-overview*') ? 'true' : 'false' }}">
                 <div>
                     <i class="fa-solid fa-school me-3"></i>Academic
                 </div>
@@ -75,39 +84,45 @@
             </a>
 
             <!-- Automatically expand Academic menu only when active on academic submenus -->
-            <div class="collapse {{ (request()->is('academic-*') && !request()->is('academic-subject-assignment-overview*')) ? 'show' : '' }}" id="academicCollapse">
+            <div class="collapse {{ request()->is('academic-*') && !request()->is('academic-subject-assignment-overview*') ? 'show' : '' }}"
+                id="academicCollapse">
                 <ul class="list-unstyled ps-4">
                     <!-- 1. Academic Sessions (e.g., Year 2020-2030 setup) -->
                     <li>
-                        <a href="{{url('/academic-session')}}" class="submenu-link {{ request()->is('academic-session*') ? 'active' : '' }}">
+                        <a href="{{ url('/academic-session') }}"
+                            class="submenu-link {{ request()->is('academic-session*') ? 'active' : '' }}">
                             <i class="fa-solid fa-calendar-check me-2"></i>Academic Sessions
                         </a>
                     </li>
-                    
+
                     <!-- 2. Basic Classes (6-10) and Sections (A, B, C or N/A) setup -->
                     <li>
-                        <a href="{{url('/academic-classes-sections')}}" class="submenu-link {{ request()->is('academic-classes-sections*') ? 'active' : '' }}">
+                        <a href="{{ url('/academic-classes-sections') }}"
+                            class="submenu-link {{ request()->is('academic-classes-sections*') ? 'active' : '' }}">
                             <i class="fa-solid fa-layer-group me-2"></i>Classes & Sections
                         </a>
                     </li>
-                    
+
                     <!-- 3. Shifts (Morning/Day/N/A) and Groups (Science/Arts/Commerce) setup -->
                     <li>
-                        <a href="{{url('/academic-shifts-groups')}}" class="submenu-link {{ request()->is('academic-shifts-groups*') ? 'active' : '' }}">
+                        <a href="{{ url('/academic-shifts-groups') }}"
+                            class="submenu-link {{ request()->is('academic-shifts-groups*') ? 'active' : '' }}">
                             <i class="fa-solid fa-network-wired me-2"></i>Shifts & Groups
                         </a>
                     </li>
 
                     <!-- 4. Class Setup: Combine Class, Section, Shift & Group for dynamic configuration -->
                     <li>
-                        <a href="{{url('/academic-class-setups')}}" class="submenu-link {{ request()->is('academic-class-setups*') ? 'active' : '' }}">
+                        <a href="{{ url('/academic-class-setups') }}"
+                            class="submenu-link {{ request()->is('academic-class-setups*') ? 'active' : '' }}">
                             <i class="fa-solid fa-sliders me-2"></i>Class Setup
                         </a>
                     </li>
 
                     <!-- 5. Subjects & Papers Master Data Management -->
                     <li>
-                        <a href="{{url('/academic-subject-papers')}}" class="submenu-link {{ request()->is('academic-subject-papers*') ? 'active' : '' }}">
+                        <a href="{{ url('/academic-subject-papers') }}"
+                            class="submenu-link {{ request()->is('academic-subject-papers*') ? 'active' : '' }}">
                             <i class="fa-solid fa-book-open me-2"></i>Subjects & Papers
                         </a>
                     </li>
@@ -115,11 +130,12 @@
                     <!-- 6. Subject Assignment configuration mapping -->
                     <li>
                         <!-- Exclude overviews report route matching explicitly -->
-                        <a href="{{url('/academic-subject-assignments')}}" class="submenu-link {{ (request()->is('academic-subject-assignments*') && !request()->is('academic-subject-assignment-overviews*')) ? 'active' : '' }}">
+                        <a href="{{ url('/academic-subject-assignments') }}"
+                            class="submenu-link {{ request()->is('academic-subject-assignments*') && !request()->is('academic-subject-assignment-overviews*') ? 'active' : '' }}">
                             <i class="fa-solid fa-book-open me-2"></i>Subject Assignment
                         </a>
                     </li>
-                    
+
                     <!-- 7. Daily schedules, periods, and teacher assignments -->
                     <li>
                         <a href="#" class="submenu-link">
@@ -132,12 +148,10 @@
 
         <!-- MODULE 3: STUDENTS -->
         <li>
-            <a href="#studentCollapse" 
-               class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('students*') ? 'active-group' : '' }}"
-               data-bs-toggle="collapse" 
-               data-bs-target="#studentCollapse"
-               role="button"
-               aria-expanded="{{ request()->is('students*') ? 'true' : 'false' }}">
+            <a href="#studentCollapse"
+                class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('students*') ? 'active-group' : '' }}"
+                data-bs-toggle="collapse" data-bs-target="#studentCollapse" role="button"
+                aria-expanded="{{ request()->is('students*') ? 'true' : 'false' }}">
                 <div>
                     <i class="fa-solid fa-user-graduate me-3"></i>Students
                 </div>
@@ -179,19 +193,18 @@
 
         <!-- MODULE 4: TEACHERS & STAFF -->
         <li>
-            <a href="#staffCollapse" 
-               class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('staff*') || request()->is('teachers*') ? 'active-group' : '' }}"
-               data-bs-toggle="collapse" 
-               data-bs-target="#staffCollapse"
-               role="button"
-               aria-expanded="{{ request()->is('staff*') || request()->is('teachers*') ? 'true' : 'false' }}">
+            <a href="#staffCollapse"
+                class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('staff*') || request()->is('teachers*') ? 'active-group' : '' }}"
+                data-bs-toggle="collapse" data-bs-target="#staffCollapse" role="button"
+                aria-expanded="{{ request()->is('staff*') || request()->is('teachers*') ? 'true' : 'false' }}">
                 <div>
                     <i class="fa-solid fa-users-gear me-3"></i>Teachers & Staff
                 </div>
                 <i class="fa-solid fa-chevron-down small transition-icon"></i>
             </a>
 
-            <div class="collapse {{ request()->is('staff*') || request()->is('teachers*') ? 'show' : '' }}" id="staffCollapse">
+            <div class="collapse {{ request()->is('staff*') || request()->is('teachers*') ? 'show' : '' }}"
+                id="staffCollapse">
                 <ul class="list-unstyled ps-4">
                     <li>
                         <a href="#" class="submenu-link">
@@ -216,12 +229,10 @@
 
         <!-- MODULE 6: ATTENDANCE -->
         <li>
-            <a href="#attendanceCollapse" 
-               class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('attendance*') ? 'active-group' : '' }}"
-               data-bs-toggle="collapse" 
-               data-bs-target="#attendanceCollapse"
-               role="button"
-               aria-expanded="{{ request()->is('attendance*') ? 'true' : 'false' }}">
+            <a href="#attendanceCollapse"
+                class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('attendance*') ? 'active-group' : '' }}"
+                data-bs-toggle="collapse" data-bs-target="#attendanceCollapse" role="button"
+                aria-expanded="{{ request()->is('attendance*') ? 'true' : 'false' }}">
                 <div>
                     <i class="fa-solid fa-clipboard-user me-3"></i>Attendance
                 </div>
@@ -251,12 +262,10 @@
 
         <!-- MODULE 7: EXAMINATIONS -->
         <li>
-            <a href="#examCollapse" 
-               class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('exams*') ? 'active-group' : '' }}"
-               data-bs-toggle="collapse" 
-               data-bs-target="#examCollapse"
-               role="button"
-               aria-expanded="{{ request()->is('exams*') ? 'true' : 'false' }}">
+            <a href="#examCollapse"
+                class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('exams*') ? 'active-group' : '' }}"
+                data-bs-toggle="collapse" data-bs-target="#examCollapse" role="button"
+                aria-expanded="{{ request()->is('exams*') ? 'true' : 'false' }}">
                 <div>
                     <i class="fa-solid fa-file-signature me-3"></i>Examinations
                 </div>
@@ -266,18 +275,18 @@
             <div class="collapse {{ request()->is('exams*') ? 'show' : '' }}" id="examCollapse">
                 <ul class="list-unstyled ps-4">
                     <li>
-                        <a href="{{url('/exms/exam-types')}}" class="submenu-link">
+                        <a href="{{ url('/exms/exam-types') }}" class="submenu-link">
                             <i class="fa-solid fa-list-check me-2"></i>Exam Types
                         </a>
                     </li>
                     <li>
-                       
-                        <a href="{{url('/exms/exam-setups')}}" class="submenu-link">
+
+                        <a href="{{ url('/exms/exam-setups') }}" class="submenu-link">
                             <i class="fa-solid fa-list-check me-2"></i>Exam Setups
                         </a>
                     </li>
                     <li>
-                        <a href="{{url('/exms/exam-schedules')}}" class="submenu-link">
+                        <a href="{{ url('/exms/exam-schedules') }}" class="submenu-link">
                             <i class="fa-solid fa-calendar-days me-2"></i>Exam Schedule
                         </a>
                     </li>
@@ -308,7 +317,7 @@
         </li>
 
         <!-- MODULE 8: FEES & ACCOUNTS -->
-        <li>
+        {{-- <li>
             <a href="#accountsCollapse" 
                class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('accounts*') || request()->is('fees*') ? 'active-group' : '' }}"
                data-bs-toggle="collapse" 
@@ -363,16 +372,109 @@
                     </li>
                 </ul>
             </div>
+        </li> --}}
+        <!-- MODULE: FEES & ACCOUNTS -->
+        <li>
+            <a href="#feesAccountsCollapse" class="sidebar-link d-flex justify-content-between align-items-center"
+                data-bs-toggle="collapse" data-bs-target="#feesAccountsCollapse" role="button">
+
+                <div>
+                    <i class="fa-solid fa-file-invoice-dollar me-3"></i>
+                    Fees & Accounts
+                </div>
+
+                <i class="fa-solid fa-chevron-down small transition-icon"></i>
+            </a>
+
+            <div class="collapse" id="feesAccountsCollapse">
+
+                <ul class="list-unstyled ps-4">
+
+                    <!-- FEE SETUP -->
+                    <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-2 mb-1"
+                        style="font-size: 10px; letter-spacing: .5px;">
+                        Fee Setup
+                    </li>
+
+                    <li>
+                        <a href="{{ url('/fees-categories') }}" class="submenu-link">
+                            <i class="fa-solid fa-tags me-2"></i>
+                            Fee Categories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/fees-months') }}" class="submenu-link">
+                            <i class="fa-solid fa-tags me-2"></i>
+                            Month Master
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="submenu-link">
+                            <i class="fa-solid fa-sitemap me-2"></i>
+                            Fee Structures
+                        </a>
+                    </li>
+
+
+                    <!-- STUDENT FEES -->
+                    <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-3 mb-1"
+                        style="font-size: 10px; letter-spacing: .5px;">
+                        Student Fees
+                    </li>
+
+                    <li>
+                        <a href="#" class="submenu-link">
+                            <i class="fa-solid fa-book me-2"></i>
+                            Student Fee Ledger
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="submenu-link">
+                            <i class="fa-solid fa-wallet me-2"></i>
+                            Collect Fees
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="submenu-link">
+                            <i class="fa-solid fa-file-invoice me-2"></i>
+                            Due Management
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="submenu-link">
+                            <i class="fa-solid fa-credit-card me-2"></i>
+                            Payment History
+                        </a>
+                    </li>
+
+
+                    <!-- ACCOUNTS -->
+                    <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-3 mb-1"
+                        style="font-size: 10px; letter-spacing: .5px;">
+                        Accounts
+                    </li>
+
+                    <li>
+                        <a href="#" class="submenu-link">
+                            <i class="fa-solid fa-hand-holding-dollar me-2"></i>
+                            Expenses
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
         </li>
 
         <!-- MODULE 9: COMMUNICATION -->
         <li>
-            <a href="#communicationCollapse" 
-               class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('communication*') ? 'active-group' : '' }}"
-               data-bs-toggle="collapse" 
-               data-bs-target="#communicationCollapse"
-               role="button"
-               aria-expanded="{{ request()->is('communication*') ? 'true' : 'false' }}">
+            <a href="#communicationCollapse"
+                class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('communication*') ? 'active-group' : '' }}"
+                data-bs-toggle="collapse" data-bs-target="#communicationCollapse" role="button"
+                aria-expanded="{{ request()->is('communication*') ? 'true' : 'false' }}">
                 <div>
                     <i class="fa-solid fa-comments me-3"></i>Communication
                 </div>
@@ -403,16 +505,14 @@
 
         <!-- MODULE 10: REPORTS & PRINT (Collapsible Parent Module) -->
         <li>
-            <!-- 
-                Active check covers both the print page, overview page, 
-                and deep details page dynamically to keep the group active 
+            <!--
+                Active check covers both the print page, overview page,
+                and deep details page dynamically to keep the group active
             -->
-            <a href="#reportsCollapse" 
-            class="sidebar-link d-flex justify-content-between align-items-center {{ (request()->is('academic-subject-list-print*') || request()->is('academic-subject-assignment-overview*') || request()->is('academic-subject-assignments-overview*')) ? 'active-group' : '' }}"
-            data-bs-toggle="collapse" 
-            data-bs-target="#reportsCollapse"
-            role="button"
-            aria-expanded="{{ (request()->is('academic-subject-list-print*') || request()->is('academic-subject-assignment-overview*') || request()->is('academic-subject-assignments-overview*')) ? 'true' : 'false' }}">
+            <a href="#reportsCollapse"
+                class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('academic-subject-list-print*') || request()->is('academic-subject-assignment-overview*') || request()->is('academic-subject-assignments-overview*') ? 'active-group' : '' }}"
+                data-bs-toggle="collapse" data-bs-target="#reportsCollapse" role="button"
+                aria-expanded="{{ request()->is('academic-subject-list-print*') || request()->is('academic-subject-assignment-overview*') || request()->is('academic-subject-assignments-overview*') ? 'true' : 'false' }}">
                 <div>
                     <i class="fa-solid fa-print me-3"></i>Reports & Print
                 </div>
@@ -420,13 +520,16 @@
             </a>
 
             <!-- Expand parent automatically when viewing printable reports, overviews, or details page -->
-            <div class="collapse {{ (request()->is('academic-subject-list-print*') || request()->is('academic-subject-assignment-overview*') || request()->is('academic-subject-assignments-overview*')) ? 'show' : '' }}" id="reportsCollapse">
+            <div class="collapse {{ request()->is('academic-subject-list-print*') || request()->is('academic-subject-assignment-overview*') || request()->is('academic-subject-assignments-overview*') ? 'show' : '' }}"
+                id="reportsCollapse">
                 <ul class="list-unstyled ps-4">
                     <!-- Academic Reports Sub-group -->
-                    <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-2 mb-1" style="font-size: 10px; letter-spacing: 0.5px;">Academic</li>
+                    <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-2 mb-1"
+                        style="font-size: 10px; letter-spacing: 0.5px;">Academic</li>
                     <li>
                         <!-- Subject Lists (Dynamic Overview & Printable Report Page)  -->
-                        <a href="{{ url('/academic-subject-list-print') }}" class="submenu-link {{ request()->is('academic-subject-list-print*') ? 'active' : '' }}">
+                        <a href="{{ url('/academic-subject-list-print') }}"
+                            class="submenu-link {{ request()->is('academic-subject-list-print*') ? 'active' : '' }}">
                             <i class="fa-solid fa-book-open me-2"></i>Subject Lists
                         </a>
                     </li>
@@ -438,7 +541,8 @@
                     </li>
 
                     <!-- Students Reports Sub-group -->
-                    <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-3 mb-1" style="font-size: 10px; letter-spacing: 0.5px;">Students</li>
+                    <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-3 mb-1"
+                        style="font-size: 10px; letter-spacing: 0.5px;">Students</li>
                     <li>
                         <!-- Student Roster Listing Printable -->
                         <a href="#" class="submenu-link">
@@ -453,31 +557,29 @@
                     </li>
 
 
-                <!-- Examinations -->
-                <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-3 mb-1"
-                    style="font-size: 10px; letter-spacing: 0.5px;">
-                    Examinations
-                </li>
+                    <!-- Examinations -->
+                    <li class="small text-uppercase text-white text-opacity-50 fw-bold mt-3 mb-1"
+                        style="font-size: 10px; letter-spacing: 0.5px;">
+                        Examinations
+                    </li>
 
-                <li>
-                    <a href="{{url('/academic-examination-shedule-lists-print')}}"
-                    class="submenu-link {{ request()->is('academic-examination-shedule-lists-print*') ? 'active' : '' }}">
-                        <i class="fa-solid fa-calendar-check me-2"></i>
-                        Exam Schedule
-                    </a>
-                </li>
+                    <li>
+                        <a href="{{ url('/academic-examination-shedule-lists-print') }}"
+                            class="submenu-link {{ request()->is('academic-examination-shedule-lists-print*') ? 'active' : '' }}">
+                            <i class="fa-solid fa-calendar-check me-2"></i>
+                            Exam Schedule
+                        </a>
+                    </li>
                 </ul>
             </div>
         </li>
 
-       <!-- MODULE 11: USER MANAGEMENT -->
+        <!-- MODULE 11: USER MANAGEMENT -->
         <li>
-            <a href="#userManagementCollapse" 
-               class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('users*') ? 'active-group' : '' }}"
-               data-bs-toggle="collapse" 
-               data-bs-target="#userManagementCollapse"
-               role="button"
-               aria-expanded="{{ request()->is('users*') ? 'true' : 'false' }}">
+            <a href="#userManagementCollapse"
+                class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('users*') ? 'active-group' : '' }}"
+                data-bs-toggle="collapse" data-bs-target="#userManagementCollapse" role="button"
+                aria-expanded="{{ request()->is('users*') ? 'true' : 'false' }}">
                 <div>
                     <i class="fa-solid fa-users me-3"></i>User Management
                 </div>
@@ -498,13 +600,9 @@
 
         <!-- MODULE 12: ACCESS CONTROL (Disabled/Locked in Current Phase - RBAC Strategy) -->
         <li>
-            <a href="#accessControlCollapse" 
-               class="sidebar-link d-flex justify-content-between align-items-center"
-               data-bs-toggle="collapse" 
-               data-bs-target="#accessControlCollapse"
-               role="button"
-               style="opacity: 0.65;"
-               aria-expanded="false">
+            <a href="#accessControlCollapse" class="sidebar-link d-flex justify-content-between align-items-center"
+                data-bs-toggle="collapse" data-bs-target="#accessControlCollapse" role="button"
+                style="opacity: 0.65;" aria-expanded="false">
                 <div class="d-flex align-items-center">
                     <i class="fa-solid fa-user-shield me-3"></i>Access Control
                     <span class="badge bg-secondary ms-2" style="font-size: 8px; padding: 2px 4px;">Locked</span>
@@ -516,10 +614,10 @@
                 <ul class="list-unstyled ps-4">
                     <li>
                         <!-- Disabled Roles sub-menu -->
-                        <a href="javascript:void(0);" 
-                           class="submenu-link d-flex align-items-center justify-content-between" 
-                           style="pointer-events: none; opacity: 0.55; cursor: not-allowed;"
-                           title="Will be implemented in final RBAC phase">
+                        <a href="javascript:void(0);"
+                            class="submenu-link d-flex align-items-center justify-content-between"
+                            style="pointer-events: none; opacity: 0.55; cursor: not-allowed;"
+                            title="Will be implemented in final RBAC phase">
                             <div>
                                 <i class="fa-solid fa-shield me-2"></i>Roles
                             </div>
@@ -527,10 +625,10 @@
                     </li>
                     <li>
                         <!-- Disabled Permissions sub-menu -->
-                        <a href="javascript:void(0);" 
-                           class="submenu-link d-flex align-items-center justify-content-between" 
-                           style="pointer-events: none; opacity: 0.55; cursor: not-allowed;"
-                           title="Will be implemented in final RBAC phase">
+                        <a href="javascript:void(0);"
+                            class="submenu-link d-flex align-items-center justify-content-between"
+                            style="pointer-events: none; opacity: 0.55; cursor: not-allowed;"
+                            title="Will be implemented in final RBAC phase">
                             <div>
                                 <i class="fa-solid fa-key me-2"></i>Permissions
                             </div>
@@ -542,12 +640,10 @@
 
         <!-- MODULE 13: SETTINGS -->
         <li>
-            <a href="#settingsCollapse" 
-               class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('settings*') ? 'active-group' : '' }}"
-               data-bs-toggle="collapse" 
-               data-bs-target="#settingsCollapse"
-               role="button"
-               aria-expanded="{{ request()->is('settings*') ? 'true' : 'false' }}">
+            <a href="#settingsCollapse"
+                class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('settings*') ? 'active-group' : '' }}"
+                data-bs-toggle="collapse" data-bs-target="#settingsCollapse" role="button"
+                aria-expanded="{{ request()->is('settings*') ? 'true' : 'false' }}">
                 <div>
                     <i class="fa-solid fa-sliders me-3"></i>Settings
                 </div>
@@ -557,7 +653,7 @@
             <div class="collapse {{ request()->is('settings*') ? 'show' : '' }}" id="settingsCollapse">
                 <ul class="list-unstyled ps-4">
                     <li>
-                        <a href="{{url('/settings/school-information')}}" class="submenu-link">
+                        <a href="{{ url('/settings/school-information') }}" class="submenu-link">
                             <i class="fa-solid fa-circle-info me-2"></i>School Information
                         </a>
                     </li>
@@ -579,11 +675,13 @@
     <!-- Footer Profile Block Inside Sidebar -->
     <div class="p-3 border-top border-white border-opacity-10 mt-auto">
         <div class="d-flex align-items-center mb-3">
-            <div class="bg-warning text-dark p-2 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+            <div class="bg-warning text-dark p-2 rounded-circle me-3 d-flex align-items-center justify-content-center"
+                style="width: 40px; height: 40px;">
                 <i class="fa-solid fa-user-tie"></i>
             </div>
             <div>
-                <h6 class="text-white mb-0 text-truncate userNameSidebarDB" style="max-width: 140px; font-size: 16px;">Admin User</h6>
+                <h6 class="text-white mb-0 text-truncate userNameSidebarDB"
+                    style="max-width: 140px; font-size: 16px;">Admin User</h6>
                 <small class="text-white userRoleSidebarDB" style="font-size: 13px; opacity: 0.8;">Super Admin</small>
             </div>
         </div>

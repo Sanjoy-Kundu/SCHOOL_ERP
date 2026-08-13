@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\Exam\ExamScheduleController;
 use App\Http\Controllers\Api\Exam\ExamSetupController;
 use App\Http\Controllers\Api\Exam\ExamTypeController;
 use App\Http\Controllers\Api\FeesManagement\FeeCategory\FeeCategoryController;
+use App\Http\Controllers\Api\FeesManagement\FeeCategory\Month\MonthController;
 use App\Http\Controllers\Api\ForgotPasswordController;
 use App\Http\Controllers\Api\Settings\SchoolInformationController;
 use Illuminate\Support\Facades\Route;
@@ -245,6 +246,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/fees/categories/update/{id}', 'update')->name('api.fees.categories.update');
         Route::delete('/fees/categories/delete/{id}', 'destroy')->name('api.fees.categories.destroy');
         Route::patch('/fees/categories/{id}/toggle-status', 'toggleStatus')->name('api.fees.categories.toggle-status');
+    });
+
+
+
+    /*--------------------------------------------------
+      Academic Month Management API Gateway Routes
+    ---------------------------------------------------*/
+    Route::controller(MonthController::class)->group(function () {
+        Route::get('/fees/months/lists', 'index')->name('api.fees.months.index');
+        Route::post('/fees/months/store', 'store')->name('api.fees.months.store');
+        Route::get('/fees/months/details/{id}', 'show')->name('api.fees.months.show');
+        Route::post('/fees/months/update/{id}', 'update')->name('api.fees.months.update');
+        Route::delete('/fees/months/delete/{id}', 'destroy')->name('api.fees.months.destroy');
+        Route::patch('/fees/months/{id}/toggle-status', 'toggleStatus')->name('api.fees.months.toggle-status');
     });
 });
 
