@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FeeCategory extends Model
 {
@@ -57,5 +58,13 @@ class FeeCategory extends Model
                 $model->code = strtoupper(trim($model->code));
             }
         });
+    }
+
+    /**
+     * Get setups mapping associated with this category.
+     */
+    public function feeSetups(): HasMany
+    {
+        return $this->hasMany(FeeSetup::class, 'fee_category_id');
     }
 }

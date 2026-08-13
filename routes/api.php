@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\Exam\ExamSetupController;
 use App\Http\Controllers\Api\Exam\ExamTypeController;
 use App\Http\Controllers\Api\FeesManagement\FeeCategory\FeeCategoryController;
 use App\Http\Controllers\Api\FeesManagement\FeeCategory\Month\MonthController;
+use App\Http\Controllers\Api\FeesManagement\FeeStructure\FeeStructureController;
 use App\Http\Controllers\Api\ForgotPasswordController;
 use App\Http\Controllers\Api\Settings\SchoolInformationController;
 use Illuminate\Support\Facades\Route;
@@ -260,6 +261,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/fees/months/update/{id}', 'update')->name('api.fees.months.update');
         Route::delete('/fees/months/delete/{id}', 'destroy')->name('api.fees.months.destroy');
         Route::patch('/fees/months/{id}/toggle-status', 'toggleStatus')->name('api.fees.months.toggle-status');
+    });
+
+
+    /*--------------------------------------------------
+      Academic Fee Structure Management API Routes
+    ---------------------------------------------------*/
+    Route::controller(FeeStructureController::class)->group(function () {
+        Route::get('/fees/structure/initial-data', 'index')->name('api.fees.structure.index'); 
+        Route::get('/fees/structure/load', 'loadStructure')->name('api.fees.structure.load');
+        Route::post('/fees/structure/store', 'store')->name('api.fees.structure.store');
+        Route::post('/fees/structure/copy', 'copyStructure')->name('api.fees.structure.copy');
     });
 });
 

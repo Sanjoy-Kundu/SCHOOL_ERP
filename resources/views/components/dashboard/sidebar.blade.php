@@ -316,63 +316,6 @@
             </div>
         </li>
 
-        <!-- MODULE 8: FEES & ACCOUNTS -->
-        {{-- <li>
-            <a href="#accountsCollapse" 
-               class="sidebar-link d-flex justify-content-between align-items-center {{ request()->is('accounts*') || request()->is('fees*') ? 'active-group' : '' }}"
-               data-bs-toggle="collapse" 
-               data-bs-target="#accountsCollapse"
-               role="button"
-               aria-expanded="{{ request()->is('accounts*') || request()->is('fees*') ? 'true' : 'false' }}">
-                <div>
-                    <i class="fa-solid fa-file-invoice-dollar me-3"></i>Fees & Accounts
-                </div>
-                <i class="fa-solid fa-chevron-down small transition-icon"></i>
-            </a>
-
-            <div class="collapse {{ request()->is('accounts*') || request()->is('fees*') ? 'show' : '' }}" id="accountsCollapse">
-                <ul class="list-unstyled ps-4">
-                    <li>
-                        <a href="{{url('/fees-categories')}}" class="submenu-link">
-                            <i class="fa-solid fa-tags me-2"></i>Fee Categories
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="submenu-link">
-                            <i class="fa-solid fa-sitemap me-2"></i>Fee Structure
-                        </a>
-                    </li>
-                    <li>
-                        <!-- BD Context: Assigning fees, waivers, or check individual student ledger -->
-                        <a href="#" class="submenu-link">
-                            <i class="fa-solid fa-user-tag me-2"></i>Student Fees
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="submenu-link">
-                            <i class="fa-solid fa-wallet me-2"></i>Collect Fees
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="submenu-link">
-                            <i class="fa-solid fa-credit-card me-2"></i>Payment History
-                        </a>
-                    </li>
-                    <li>
-                        <!-- BD Context: Managing overall dues, waivers, and sending due notifications -->
-                        <a href="#" class="submenu-link">
-                            <i class="fa-solid fa-file-invoice me-2"></i>Due Management
-                        </a>
-                    </li>
-                    <li>
-                        <!-- BD Context: Tracking school's utility, salary, maintenance costs -->
-                        <a href="#" class="submenu-link">
-                            <i class="fa-solid fa-hand-holding-dollar me-2"></i>Expenses
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </li> --}}
         <!-- MODULE: FEES & ACCOUNTS -->
         <li>
             <a href="#feesAccountsCollapse" class="sidebar-link d-flex justify-content-between align-items-center"
@@ -410,7 +353,7 @@
                     </li>
 
                     <li>
-                        <a href="#" class="submenu-link">
+                        <a href="{{url('/fees-structures')}}" class="submenu-link">
                             <i class="fa-solid fa-sitemap me-2"></i>
                             Fee Structures
                         </a>

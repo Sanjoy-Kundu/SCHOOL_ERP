@@ -15,6 +15,7 @@ use App\Http\Controllers\Web\Exam\ExamScheduleController;
 use App\Http\Controllers\Web\Exam\ExamSetupController;
 use App\Http\Controllers\web\Exam\ExamTypeController;
 use App\Http\Controllers\Web\FeesManagement\FeeCategory\FeeCategoryController;
+use App\Http\Controllers\Web\FeesManagement\FeeStructure\FeeStructureController;
 use App\Http\Controllers\Web\FessManagement\MonthMaster\MonthController;
 use App\Http\Controllers\Web\ForgotPasswordController;
 use App\Http\Controllers\Web\Settings\SchoolInformationController;
@@ -134,6 +135,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ----------------------------------------------------------*/
     Route::get('/fees-categories', [FeeCategoryController::class, 'createFeesCategroy'])->name('fees-categories.create');
     Route::get('/fees-months', [MonthController::class, 'createMonth'])->name('fees-month.create');
+    Route::get('/fees-structures', [FeeStructureController::class, 'createFeeStructure'])->name('fees-structures.create');
 
 
 });
