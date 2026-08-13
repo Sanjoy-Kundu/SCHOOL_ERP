@@ -8,6 +8,7 @@ use App\Models\ClassSetup;
 use App\Models\FeeCategory;
 use App\Models\FeeSetup;
 use App\Models\Month;
+use App\Models\SchoolInformation;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -76,12 +77,13 @@ class FeeStructureController extends Controller
             foreach ($storedSetups as $setup) {
                 $matrix[$setup->fee_category_id][$setup->month_id] = $setup->amount;
             }
-
+             $schoolInfo = SchoolInformation::first();
             return response()->json([
                 'status' => true,
                 'months' => $months,
                 'categories' => $categories,
-                'matrix' => $matrix
+                'matrix' => $matrix,
+                'school' => $schoolInfo
             ], 200);
 
         } catch (Exception $e) {

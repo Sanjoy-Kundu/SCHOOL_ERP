@@ -117,6 +117,25 @@
 
     <!-- Dynamic Main Yearly Matrix Table Wrapper -->
     <div id="matrixWrapper" class="card border-0 card-responsive p-3 p-sm-4 bg-white shadow-sm d-none">
+
+                <!-- School Information Branding Header Block (Responsive and Premium Layout) -->
+        <div id="schoolHeaderBlock" class="d-flex align-items-center justify-content-center gap-3 border-bottom pb-4 mb-4 flex-column flex-sm-row text-center text-sm-start d-none">
+            <div class="flex-shrink-0">
+                <img id="schoolLogo" src="" alt="School Logo" class="img-fluid rounded-circle border p-1 shadow-sm bg-light" style="width: 85px; height: 85px; object-fit: cover;">
+            </div>
+            <div class="flex-grow-1">
+                <h3 id="schoolNameBn" class="fw-bold mb-1 text-success" style="color: #004d40 !important; font-size: 1.5rem;"></h3>
+                <h6 id="schoolNameEn" class="text-secondary mb-2 fw-semibold text-uppercase tracking-wide" style="font-size: 0.95rem; opacity: 0.85;"></h6>
+                <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-sm-start text-muted small">
+                    <span><i class="fa-solid fa-hashtag me-1 text-success"></i>ইআইআইএন (EIIN): <strong id="schoolEiin" class="text-dark"></strong></span>
+                    <span><i class="fa-solid fa-barcode me-1 text-success"></i>স্কুল কোড: <strong id="schoolCode" class="text-dark"></strong></span>
+                    <span><i class="fa-solid fa-calendar-day me-1 text-success"></i>স্থাপিত: <strong id="schoolEst" class="text-dark"></strong></span>
+                </div>
+                <p id="schoolAddress" class="mb-0 text-muted small mt-1"></p>
+            </div>
+        </div>
+
+
         <h5 class="fw-bold text-dark mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
             <span><i class="fa-solid fa-table text-success me-2"></i>বার্ষিক ফি ম্যাট্রিক্স বিবরণী</span>
             <span class="badge bg-light text-success border border-success px-3 py-2 rounded-pill fs-6" id="badgeSessionClass"></span>
@@ -325,12 +344,42 @@ $(document).ready(function() {
                     class_setup_id: classSetupId
                 }
             });
-            console.log(res);
+           // console.log(res);
 
             if (res.data.status === true) {
                 activeMonths = res.data.months || [];
                 activeCategories = res.data.categories || [];
                 savedMatrix = res.data.matrix || {};
+
+
+                   // --- SCHOOL BRANDING HEADER RENDERING ---
+                if (res.data.school) {
+                    const school = res.data.school;
+                    $('#schoolNameBn').text(school.name_bn || 'বিদ্যালয়ের নাম');
+                    $('#schoolNameEn').text(school.name_en || 'SCHOOL NAME');
+                    $('#schoolEiin').text(convertToBanglaNumber(school.eiin || '—'));
+                    $('#schoolCode').text(convertToBanglaNumber(school.school_code || '—'));
+                    
+                    // স্থাপিত সাল বাংলা করুন
+                    const estYear = school.established_year ? school.established_year.toString() : '—';
+                    $('#schoolEst').text(convertToBanglaNumber(estYear));
+                    
+                    // ঠিকানা এবং যোগাযোগ
+                    let addressText = school.address || 'ঠিকানা প্রদান করা হয়নি';
+                    if (school.phone) {
+                        addressText += ' | ফোন: ' + convertToBanglaNumber(school.phone);
+                    }
+                    $('#schoolAddress').text(addressText);
+
+                    // লোগো বসানো (ডিফল্ট ফলব্যাক লোগো সহ)
+                    const logoUrl = school.logo_circle_url || school.logo_square_url || '/images/defaults/circle-logo.png';
+                    $('#schoolLogo').attr('src', logoUrl);
+
+                    // হেডার ব্লক প্রদর্শন করা
+                    $('#schoolHeaderBlock').removeClass('d-none').addClass('d-flex');
+                } else {
+                    $('#schoolHeaderBlock').addClass('d-none').removeClass('d-flex');
+                }
 
                 // Bind Badge Meta String
                 const sessionLabel = $('#filterSessionId option:selected').text();
