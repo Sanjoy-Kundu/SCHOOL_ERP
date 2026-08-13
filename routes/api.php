@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\ChangePasswordController;
 use App\Http\Controllers\Api\Exam\ExamScheduleController;
 use App\Http\Controllers\Api\Exam\ExamSetupController;
 use App\Http\Controllers\Api\Exam\ExamTypeController;
+use App\Http\Controllers\Api\FeesManagement\FeeCategory\FeeCategoryController;
 use App\Http\Controllers\Api\ForgotPasswordController;
 use App\Http\Controllers\Api\Settings\SchoolInformationController;
 use Illuminate\Support\Facades\Route;
@@ -230,6 +231,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/exam-schedule-dependencies', 'getFormDependencies')->name('api.exam-schedules.dependencies');
         Route::get('/academic/exam-schedules/class-setups/{classId}', 'getClassSetups')->name('api.exam-schedules.class-setups');
         Route::get('/academic/exam-schedules/subject-assignments/{classSetupId}', 'getSubjectAssignments')->name('api.exam-schedules.subject-assignments');
+    });
+
+
+
+    /*--------------------------------------------------
+      Fee Category Management API Endpoints
+    ---------------------------------------------------*/
+    Route::controller(FeeCategoryController::class)->group(function () {
+        Route::get('/fees/categories/lists', 'index')->name('api.fees.categories.index'); 
+        Route::post('/fees/categories/store', 'store')->name('api.fees.categories.store');
+        Route::get('/fees/categories/details/{id}', 'show')->name('api.fees.categories.show');
+        Route::post('/fees/categories/update/{id}', 'update')->name('api.fees.categories.update');
+        Route::delete('/fees/categories/delete/{id}', 'destroy')->name('api.fees.categories.destroy');
+        Route::patch('/fees/categories/{id}/toggle-status', 'toggleStatus')->name('api.fees.categories.toggle-status');
     });
 });
 

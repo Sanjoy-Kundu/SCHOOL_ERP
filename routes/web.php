@@ -14,6 +14,7 @@ use App\Http\Controllers\Web\EmailVerificationController;
 use App\Http\Controllers\Web\Exam\ExamScheduleController;
 use App\Http\Controllers\Web\Exam\ExamSetupController;
 use App\Http\Controllers\web\Exam\ExamTypeController;
+use App\Http\Controllers\Web\FeesManagement\FeeCategory\FeeCategoryController;
 use App\Http\Controllers\Web\ForgotPasswordController;
 use App\Http\Controllers\Web\Settings\SchoolInformationController;
 use App\Mail\VerificationMail;
@@ -125,6 +126,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
      */
     Route::get('/settings/school-information', [SchoolInformationController::class, 'schoolInformationCreate'])->name('settings.school-information.create');
 
+
+
+    /*------------------------------------------------------
+    FEE CATEGORY OPERATIONS
+    ----------------------------------------------------------*/
+    Route::get('/fees-categories', [FeeCategoryController::class, 'createFeesCategroy'])->name('fees-categories.create');
 
 
 });

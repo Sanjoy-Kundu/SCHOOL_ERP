@@ -324,7 +324,7 @@
             <div class="collapse {{ request()->is('accounts*') || request()->is('fees*') ? 'show' : '' }}" id="accountsCollapse">
                 <ul class="list-unstyled ps-4">
                     <li>
-                        <a href="#" class="submenu-link">
+                        <a href="{{url('/fees-categories')}}" class="submenu-link">
                             <i class="fa-solid fa-tags me-2"></i>Fee Categories
                         </a>
                     </li>
