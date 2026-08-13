@@ -365,6 +365,25 @@
         return number.toString().split('').map(digit => banglaDigits[digit] || digit).join('');
     }
 
+
+        // Helper Utility to Convert 24-hour time string to 12-hour double digit format
+    function convertTo12Hour(timeStr) {
+        if (!timeStr) return '';
+        const parts = timeStr.split(':');
+        let hours = parseInt(parts[0], 10);
+        const minutes = parts[1] || '00';
+        
+        if (isNaN(hours)) return timeStr;
+        
+        hours = hours % 12;
+        hours = hours ? hours : 12; // '0' is mapped to '12'
+        
+        const formattedHours = hours < 10 ? '0' + hours : hours;
+        return `${formattedHours}:${minutes}`;
+    }
+
+    
+
     // Dynamic Filter Trigger & Table Load Handler (Direct Academic View)
     async function loadSchedulesList() {
         const examTypeId = $('#filterExamTypeId').val();
@@ -526,7 +545,7 @@
                                     <small class="text-black d-block">${weekdayStr}</small>
                                 </td>
                                 <td class="text-center">
-                                    <span class="fw-bold text-black">${convertToBanglaNumber(item.start_time)} - ${convertToBanglaNumber(item.end_time)}</span>
+                                    <span class="fw-bold text-black">${convertToBanglaNumber(convertTo12Hour(item.start_time))} - ${convertToBanglaNumber(convertTo12Hour(item.end_time))}</span>
                                 </td>
                                 <td>
                                     <div class="text-black">রুম: ${item.room_name || '—'}</div>
@@ -571,7 +590,7 @@
                                 <span class="text-black">${formattedSubject}</span>
                             </td>
                             <td class="text-center">
-                                <span class="fw-bold text-black">${convertToBanglaNumber(item.start_time)} - ${convertToBanglaNumber(item.end_time)}</span>
+                                <span class="fw-bold text-black">${convertToBanglaNumber(convertTo12Hour(item.start_time))} - ${convertToBanglaNumber(convertTo12Hour(item.end_time))}</span>
                             </td>
                             <td>
                                 <div class="text-black">রুম: ${item.room_name || '—'}</div>
@@ -664,9 +683,4 @@
 }
 </script>
 @endpush
-
-
-
-
-
  
