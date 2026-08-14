@@ -16,6 +16,7 @@ class FeeSetup extends Model
 
     /**
      * The attributes that are mass assignable.
+     * Note: 'month_unique_val' is omitted as it is database generated.
      *
      * @var array<int, string>
      */
@@ -34,6 +35,10 @@ class FeeSetup extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'academic_session_id' => 'integer',
+        'class_setup_id' => 'integer',
+        'fee_category_id' => 'integer',
+        'month_id' => 'integer',
         'amount' => 'decimal:2',
         'status' => 'boolean',
         'created_at' => 'datetime',

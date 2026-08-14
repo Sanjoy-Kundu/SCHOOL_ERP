@@ -65,6 +65,161 @@
         outline: none;
         box-shadow: 0 0 0 2px rgba(0, 77, 64, 0.15);
     }
+
+    /* Print Optimization CSS Stylesheet - Landscape Format */
+ @media print {
+        @page {
+            size: A4 landscape; 
+            margin: 15mm 10mm 15mm 10mm;
+        }
+        
+        html, body {
+            background-color: #fff !important;
+            color: #000 !important;
+            font-size: 11px !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+        }
+
+        #wrapper, 
+        .main-content, 
+        .content-wrapper, 
+        #tableCard, 
+        .container, 
+        .container-fluid, 
+        .container-responsive,
+        #matrixWrapper {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+            position: relative !important;
+            background: none !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        .d-print-none,
+        .sidebar,
+        .navbar,
+        .main-header,
+        .main-footer,
+        .card:not(#matrixWrapper),
+        .btn,
+        select,
+        input:not(.matrix-input),
+        label,
+        .spinner-border,
+        #emptyStateMessage {
+            display: none !important;
+        }
+
+        #matrixWrapper {
+            display: block !important;
+            visibility: visible !important;
+            width: 100% !important;
+            padding: 5mm !important;
+            box-shadow: none !important;
+            border: none !important;
+            background: transparent !important;
+        }
+
+      
+        .text-center.mb-4.pb-3.border-bottom {
+            margin-bottom: 20px !important;
+            padding-bottom: 15px !important;
+            border-bottom: 2px solid #000 !important;
+        }
+
+        .custom-matrix-table {
+            width: 100% !important;
+            min-width: 100% !important;
+            border-collapse: collapse !important;
+            margin-top: 15px !important;
+        }
+
+        .custom-matrix-table thead th {
+            background-color: #f2f2f2 !important;
+            color: #000 !important;
+            border: 1px solid #000 !important;
+            padding: 6px 4px !important;
+            font-size: 10px !important;
+            font-weight: bold !important;
+            text-align: center !important;
+            position: static !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .custom-matrix-table tbody td {
+            border: 1px solid #000 !important;
+            padding: 6px 4px !important;
+            font-size: 10px !important;
+            color: #000 !important;
+            vertical-align: middle !important;
+            background-color: transparent !important;
+        }
+
+        .custom-matrix-table td.sticky-col,
+        .custom-matrix-table th.sticky-col {
+            position: static !important;
+            background-color: transparent !important;
+            border-right: 1px solid #000 !important;
+        }
+
+        
+        .matrix-input {
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            color: #000 !important;
+            font-weight: bold !important;
+            text-align: right !important;
+            width: 100% !important;
+            padding: 0 !important;
+        }
+
+        .matrix-input::-webkit-outer-spin-button,
+        .matrix-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .table-secondary {
+            background-color: #f2f2f2 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+   
+        tr {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+
+        .signature-section {
+            display: flex !important;
+            margin-top: 55px !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+
+        .signature-section hr {
+            border-top: 1.5px solid #000 !important;
+            opacity: 1 !important;
+            margin-bottom: 5px !important;
+        }
+        
+        .signature-section span {
+            color: #000 !important;
+            font-weight: bold !important;
+        }
+    } 
+
 </style>
 @endpush
 
@@ -75,7 +230,10 @@
             <h1 class="h3 mb-1 text-gray-800 fw-bold title-responsive">ফি কাঠামো নির্ধারণ (Fee Structure)</h1>
             <p class="text-muted small mb-0">বিদ্যালয়ের বিভিন্ন শ্রেণী বিন্যাসের অধীনে শিক্ষাবর্ষ ভিত্তিক ফি এর তালিকা সেট করুন।</p>
         </div>
-        <div>
+        <div class="d-flex gap-2">
+            <button type="button" id="printReportBtn" onclick="window.print();" class="btn btn-primary fw-bold px-3 py-2 rounded-3 shadow-sm d-none">
+                <i class="fa-solid fa-print me-2"></i>প্রিন্ট / PDF ডাউনলোড
+            </button>
             <button type="button" class="btn btn-outline-primary fw-bold px-3 py-2 rounded-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#copyStructureModal">
                 <i class="fa-solid fa-copy me-2"></i>পূর্ববর্তী শিক্ষাবর্ষ থেকে কপি করুন
             </button>
@@ -109,7 +267,7 @@
     </div>
 
     <!-- Empty State / Instruction Loader Block -->
-    <div id="emptyStateMessage" class="text-center py-5 bg-white rounded-3 shadow-sm card-responsive border">
+    <div id="emptyStateMessage" class="text-center py-5 bg-white rounded-3 shadow-sm card-responsive border d-print-none animate__animated animate__fadeIn">
         <i class="fa-solid fa-table-cells text-warning fs-1 mb-3 d-block"></i>
         <h5 class="fw-bold text-black">ফি কাঠামো লোড করুন</h5>
         <p class="text-black small mb-0 px-3">ফি ম্যাট্রিক্স জেনারেট এবং কনফিগার করতে অনুগ্রহ করে উপরের শিক্ষাবর্ষ ও শ্রেণী নির্বাচন করে "ফি কাঠামো লোড করুন" বাটনে ক্লিক করুন।</p>
@@ -131,12 +289,17 @@
                     <span><i class="fa-solid fa-barcode me-1 text-success"></i>স্কুল কোড: <strong id="schoolCode" class="text-black"></strong></span>
                     <span><i class="fa-solid fa-calendar-day me-1 text-success"></i>স্থাপিত: <strong id="schoolEst" class="text-black"></strong></span>
                 </div>
+                <!-- Premium Sub-header Meta Data for Print Sheet -->
+                <div class="mt-2 text-dark small fw-bold">
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1.5 rounded-pill" style="font-size: 0.85rem;">
+                        শিক্ষাবর্ষ: <strong id="metaSessionName"></strong> || শ্রেণী বিন্যাস: <strong id="metaClassLabel"></strong>
+                    </span>
+                </div>
                 <p id="schoolAddress" class="mb-0 text-black small mt-1"></p>
             </div>
         </div>
 
-
-        <h5 class="fw-bold text-dark mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <h5 class="fw-bold text-dark mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2 d-print-none">
             <span><i class="fa-solid fa-table text-success me-2"></i>বার্ষিক ফি ম্যাট্রিক্স বিবরণী</span>
             <span class="badge bg-light text-success border border-success px-3 py-2 rounded-pill fs-6" id="badgeSessionClass"></span>
         </h5>
@@ -160,7 +323,7 @@
                 <div class="col-12 col-md-6 text-start">
                     <h5 class="fw-bold text-secondary mb-0">সর্বমোট বার্ষিক ফি (Grand Total): ৳ <span id="grandAnnualTotal" class="text-success fs-4 fw-bold">০.০০</span></h5>
                 </div>
-                <div class="col-12 col-md-6 text-end d-flex justify-content-md-end justify-content-center gap-2 flex-wrap">
+                <div class="col-12 col-md-6 text-end d-flex justify-content-md-end justify-content-center gap-2 flex-wrap d-print-none">
                     <button type="button" id="resetStructureBtn" class="btn btn-outline-danger fw-bold px-3 py-2 rounded-3 shadow-sm">
                         <i class="fa-solid fa-arrows-rotate me-2"></i>রিসেট করুন
                     </button>
@@ -169,6 +332,23 @@
                     </button>
                 </div>
             </div>
+
+            <!-- Signature Pad Footer for Printing -->
+            <div class="row mt-5 pt-4 signature-section d-none">
+                <div class="col-6 text-start">
+                    <div class="d-inline-block text-center" style="width: 200px;">
+                        <hr class="mb-1" style="border-top: 1.5px solid #000 !important; opacity: 1;">
+                        <span class="small fw-bold text-black">প্রস্তুতকারী (Accountant/Clerk)</span>
+                    </div>
+                </div>
+                <div class="col-6 text-end">
+                    <div class="d-inline-block text-center" style="width: 200px;">
+                        <hr class="mb-1" style="border-top: 1.5px solid #000 !important; opacity: 1;">
+                        <span class="small fw-bold text-black">প্রধান শিক্ষক / অধ্যক্ষ</span>
+                    </div>
+                </div>
+            </div>
+
         </form>
     </div>
 </div>
@@ -188,6 +368,7 @@
                     <p class="text-muted small">নির্ধারিত উৎসের (Source) শিক্ষাবর্ষের সকল কনফিগারেশন টার্গেট শিক্ষাবর্ষে কপি হয়ে যাবে।</p>
                     
                     <!-- Source Session -->
+                   <!-- Source Session -->
                     <div class="mb-3">
                         <label for="sourceSessionId" class="form-label fw-semibold small text-dark">উৎস শিক্ষাবর্ষ (Source Session) *</label>
                         <select class="form-select rounded-3" id="sourceSessionId" required>
@@ -196,7 +377,7 @@
                         <div class="invalid-feedback" id="error-source-session"></div>
                     </div>
 
-                    <!-- Target Session -->
+                     <!-- Target Session -->
                     <div class="mb-3">
                         <label for="targetSessionId" class="form-label fw-semibold small text-dark">টার্গেট শিক্ষাবর্ষ (Target Session) *</label>
                         <select class="form-select rounded-3" id="targetSessionId" required>
@@ -205,7 +386,7 @@
                         <div class="invalid-feedback" id="error-target-session"></div>
                     </div>
 
-                    <!-- Class Setup Target -->
+                          <!-- Class Setup Target -->
                     <div class="mb-3">
                         <label for="copyClassSetupId" class="form-label fw-semibold small text-dark">শ্রেণী বিন্যাস (Class Setup Target) *</label>
                         <select class="form-select rounded-3" id="copyClassSetupId" required>
@@ -243,32 +424,42 @@ $(document).ready(function() {
     function calculateMatrixTotals() {
         let grandTotal = 0;
         
-        // 1. Calculate row totals (yearly totals per category)
         activeCategories.forEach(cat => {
             let rowTotal = 0;
-            activeMonths.forEach(m => {
-                const val = parseFloat($(`.matrix-input[data-category="${cat.id}"][data-month="${m.id}"]`).val()) || 0;
-                rowTotal += val;
-            });
+            if (cat.type === 'one_time') {
+                // One-time configurations don't have month bindings.
+                // Pull directly from the annual amount input (month index mapped to 0)
+                const val = parseFloat($(`.matrix-input[data-category="${cat.id}"][data-month="0"]`).val()) || 0;
+                rowTotal = val;
+            } else {
+                // For monthly and custom categories
+                activeMonths.forEach(m => {
+                    const val = parseFloat($(`.matrix-input[data-category="${cat.id}"][data-month="${m.id}"]`).val()) || 0;
+                    rowTotal += val;
+                });
+            }
             $(`#rowTotal-${cat.id}`).text(convertToBanglaNumber(rowTotal.toFixed(2)));
             grandTotal += rowTotal;
         });
 
-        // 2. Calculate column totals (monthly totals across all categories)
+        // Calculate column totals (Only relevant for monthly and custom columns)
         activeMonths.forEach(m => {
             let colTotal = 0;
             activeCategories.forEach(cat => {
-                const val = parseFloat($(`.matrix-input[data-category="${cat.id}"][data-month="${m.id}"]`).val()) || 0;
-                colTotal += val;
+                if (cat.type !== 'one_time') {
+                    const val = parseFloat($(`.matrix-input[data-category="${cat.id}"][data-month="${m.id}"]`).val()) || 0;
+                    colTotal += val;
+                }
             });
             $(`#colTotal-${m.id}`).text(convertToBanglaNumber(colTotal.toFixed(2)));
         });
 
-        // 3. Set global grand total sum
+        // Set global grand total sum
         $('#grandAnnualTotal').text(convertToBanglaNumber(grandTotal.toFixed(2)));
     }
 
-    // Load initial dropdown values from API
+
+        // Load initial dropdown values from API
     async function loadInitialData() {
         try {
             const res = await axios.get('/api/fees/structure/initial-data');
@@ -312,7 +503,6 @@ $(document).ready(function() {
 
     // Direct event listener for input value keyups
     $(document).on('keyup input', '.matrix-input', function () {
-        // Enforce boundary parameters safely
         if (parseFloat($(this).val()) < 0) {
             $(this).val(0);
         }
@@ -328,16 +518,15 @@ $(document).ready(function() {
         // Toggle UI wrappers back to original empty state
         $('#matrixWrapper').addClass('d-none');
         $('#emptyStateMessage').removeClass('d-none');
+        $('#printReportBtn').addClass('d-none'); // Hide print button on reset
 
         // Clear dynamic elements safely
         $('#matrixHeader').empty();
         $('#matrixBody').empty();
         $('#grandAnnualTotal').text('০.০০');
 
-        // Optional smooth scroll back to filters
         $('html, body').animate({ scrollTop: 0 }, 'fast');
 
-        // Alert Confirmation Toast
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
@@ -379,46 +568,54 @@ $(document).ready(function() {
                     class_setup_id: classSetupId
                 }
             });
-           // console.log(res);
 
             if (res.data.status === true) {
                 activeMonths = res.data.months || [];
                 activeCategories = res.data.categories || [];
                 savedMatrix = res.data.matrix || {};
+                const school = res.data.school;
+                const classSetup = res.data.class_setup;
 
+                // Show Print PDF button dynamically when loaded
+                $('#printReportBtn').removeClass('d-none');
 
-                   // --- SCHOOL BRANDING HEADER RENDERING ---
-                if (res.data.school) {
-                    const school = res.data.school;
+                // --- SCHOOL BRANDING HEADER RENDERING ---
+                if (school) {
                     $('#schoolNameBn').text(school.name_bn || 'বিদ্যালয়ের নাম');
                     $('#schoolNameEn').text(school.name_en || 'SCHOOL NAME');
                     $('#schoolEiin').text(convertToBanglaNumber(school.eiin || '—'));
                     $('#schoolCode').text(convertToBanglaNumber(school.school_code || '—'));
                     
-                    // স্থাপিত সাল বাংলা করুন
                     const estYear = school.established_year ? school.established_year.toString() : '—';
                     $('#schoolEst').text(convertToBanglaNumber(estYear));
                     
-                    // ঠিকানা এবং যোগাযোগ
                     let addressText = school.address || 'ঠিকানা প্রদান করা হয়নি';
                     if (school.phone) {
                         addressText += ' | ফোন: ' + convertToBanglaNumber(school.phone);
                     }
                     $('#schoolAddress').text(addressText);
 
-                    // লোগো বসানো (ডিফল্ট ফলব্যাক লোগো সহ)
                     const logoUrl = school.logo_circle_url || school.logo_square_url || '/images/defaults/circle-logo.png';
                     $('#schoolLogo').attr('src', logoUrl);
 
-                    // হেডার ব্লক প্রদর্শন করা
                     $('#schoolHeaderBlock').removeClass('d-none').addClass('d-flex');
                 } else {
                     $('#schoolHeaderBlock').addClass('d-none').removeClass('d-flex');
                 }
 
-                // Bind Badge Meta String
+                // Bind Meta Session & Class Information
                 const sessionLabel = $('#filterSessionId option:selected').text();
-                const classLabel = $('#filterClassSetupId option:selected').text();
+                let classLabel = '—';
+                if (classSetup) {
+                    const className = classSetup.school_class ? classSetup.school_class.name : (classSetup.schoolClass ? classSetup.schoolClass.name : '—');
+                    const sectionName = classSetup.section ? ' - ' + classSetup.section.name : '';
+                    const shiftName = classSetup.shift ? ' - ' + classSetup.shift.name : '';
+                    const groupName = (classSetup.group && classSetup.group.name !== '—' && classSetup.group.name !== 'N/A') ? ' (' + classSetup.group.name + ')' : '';
+                    classLabel = `${className}${sectionName}${shiftName}${groupName}`;
+                }
+                $('#metaSessionName').text(sessionLabel);
+                $('#metaClassLabel').text(classLabel);
+
                 $('#badgeSessionClass').text(`${sessionLabel} | ${classLabel}`);
 
                 // Generate table columns headers
@@ -435,26 +632,51 @@ $(document).ready(function() {
                     rowsHtml += `<tr>`;
                     rowsHtml += `<td class="sticky-col fw-bold text-dark">${cat.name}</td>`;
                     
-                    activeMonths.forEach(m => {
-                        // Retrieve previous configuration amount, fallback to empty
-                        const amountVal = savedMatrix[cat.id] && savedMatrix[cat.id][m.id] !== undefined 
-                            ? savedMatrix[cat.id][m.id] 
+                    if (cat.type === 'one_time') {
+                        // Yearly / One-time fee category: spans across all 12 month columns cleanly
+                        // Inputs bind to month_id "0"
+                        const amountVal = savedMatrix[cat.id] && savedMatrix[cat.id][0] !== undefined 
+                            ? savedMatrix[cat.id][0] 
                             : '';
 
                         rowsHtml += `
-                            <td class="text-center">
-                                <input type="number" 
-                                       class="matrix-input" 
-                                       name="fees[${cat.id}][${m.id}]" 
-                                       data-category="${cat.id}" 
-                                       data-month="${m.id}" 
-                                       value="${amountVal}" 
-                                       placeholder="০" 
-                                       min="0" 
-                                       step="10">
+                            <td colspan="${activeMonths.length}" class="text-center">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <span class="fw-semibold text-secondary me-2 small">বার্ষিক পরিমাণ (Annual Amount): ৳</span>
+                                    <input type="number" 
+                                           class="matrix-input text-center w-25 border border-success" 
+                                           name="fees[${cat.id}][0]" 
+                                           data-category="${cat.id}" 
+                                           data-month="0" 
+                                           value="${amountVal}" 
+                                           placeholder="০" 
+                                           min="0" 
+                                           step="50">
+                                </div>
                             </td>
                         `;
-                    });
+                    } else {
+                        // Monthly & Custom fee categories: render individual month columns
+                        activeMonths.forEach(m => {
+                            const amountVal = savedMatrix[cat.id] && savedMatrix[cat.id][m.id] !== undefined 
+                                ? savedMatrix[cat.id][m.id] 
+                                : '';
+
+                            rowsHtml += `
+                                <td class="text-center">
+                                    <input type="number" 
+                                           class="matrix-input" 
+                                           name="fees[${cat.id}][${m.id}]" 
+                                           data-category="${cat.id}" 
+                                           data-month="${m.id}" 
+                                           value="${amountVal}" 
+                                           placeholder="০" 
+                                           min="0" 
+                                           step="10">
+                                </td>
+                            `;
+                        });
+                    }
 
                     // Row total placeholder
                     rowsHtml += `<td class="text-center fw-bold text-primary" id="rowTotal-${cat.id}">০.০০</td>`;

@@ -18,9 +18,8 @@ use Illuminate\Support\Facades\Validator;
 
 class FeeStructureController extends Controller
 {
-/**
+    /**
      * Display the dynamic Fee Structure Management dropdown list configurations.
-     * Accessible at: GET /api/fees/structure/initial-data
      */
     public function index(): JsonResponse
     {
@@ -46,7 +45,6 @@ class FeeStructureController extends Controller
 
     /**
      * Fetch existing fee structure configurations as an associative pivot array.
-     * Accessible at: GET /api/fees/structure/load
      */
     public function loadStructure(Request $request): JsonResponse
     {
@@ -63,27 +61,32 @@ class FeeStructureController extends Controller
         }
 
         try {
-            // Load active months and active fee categories sorted by prioritization
             $months = Month::where('is_active', true)->orderBy('sort_order', 'asc')->get();
             $categories = FeeCategory::where('is_active', true)->orderBy('sort_order', 'asc')->get();
 
-            // Fetch stored values from normalized table structure
             $storedSetups = FeeSetup::where('academic_session_id', $request->academic_session_id)
                 ->where('class_setup_id', $request->class_setup_id)
                 ->get();
 
             // Transform raw vertical rows into associative 2D array representation
+            // We use '0' as a key placeholder for month-less (one_time) fee mappings
             $matrix = [];
             foreach ($storedSetups as $setup) {
-                $matrix[$setup->fee_category_id][$setup->month_id] = $setup->amount;
+                $mKey = $setup->month_id ?? 0;
+                $matrix[$setup->fee_category_id][$mKey] = $setup->amount;
             }
-             $schoolInfo = SchoolInformation::first();
+
+            $schoolInfo = SchoolInformation::first();
+            $classSetup = ClassSetup::with(['schoolClass', 'section', 'shift', 'group'])
+                ->find($request->class_setup_id);
+
             return response()->json([
                 'status' => true,
                 'months' => $months,
                 'categories' => $categories,
                 'matrix' => $matrix,
-                'school' => $schoolInfo
+                'school' => $schoolInfo,
+                'class_setup' => $classSetup
             ], 200);
 
         } catch (Exception $e) {
@@ -97,7 +100,6 @@ class FeeStructureController extends Controller
 
     /**
      * Store or Update Yearly Fee Matrix configurations securely inside Transaction.
-     * Accessible at: POST /api/fees/structure/store
      */
     public function store(Request $request): JsonResponse
     {
@@ -121,29 +123,62 @@ class FeeStructureController extends Controller
             $classSetupId = $request->class_setup_id;
             $feesMatrix = $request->fees;
 
+            // Pre-load active categories from Database for strict validation checking
+            $categories = FeeCategory::whereIn('id', array_keys($feesMatrix))->get()->keyBy('id');
+
             foreach ($feesMatrix as $categoryId => $monthsData) {
-                foreach ($monthsData as $monthId => $amount) {
-                    
-                    // Sanitize input values cleanly
-                    $amountVal = $amount !== null && $amount !== '' ? (float) $amount : 0.00;
-                    
-                    // Map unique key parameters
+                if (!isset($categories[$categoryId])) {
+                    throw new Exception("অবৈধ ফি ক্যাটাগরি সনাক্ত করা হয়েছে।");
+                }
+
+                $category = $categories[$categoryId];
+
+                if ($category->type === FeeCategory::TYPE_ONE_TIME) {
+                    // Yearly / One-time fee category: spans across all 12 month columns cleanly
+                    // Pull amount directly from index "0"
+                    $amount = $monthsData[0] ?? $monthsData[''] ?? 0.00;
+                    $amountVal = ($amount !== null && $amount !== '') ? (float) $amount : 0.00;
+
                     $keys = [
                         'academic_session_id' => $sessionId,
-                        'class_setup_id' => $classSetupId,
-                        'fee_category_id' => $categoryId,
-                        'month_id' => $monthId ?: null
+                        'class_setup_id'      => $classSetupId,
+                        'fee_category_id'     => $categoryId,
+                        'month_id'            => null // Strictly NULL for one_time/yearly configs
                     ];
 
                     if ($amountVal > 0) {
-                        // Create or update stored values securely inside the database
                         FeeSetup::updateOrCreate($keys, [
                             'amount' => $amountVal,
                             'status' => true
                         ]);
                     } else {
-                        // Clean up the database: delete row if the amount is set to 0 or blank
                         FeeSetup::where($keys)->delete();
+                    }
+
+                } else {
+                    // For monthly & custom structures
+                    foreach ($monthsData as $monthId => $amount) {
+                        if (empty($monthId)) {
+                            continue; // Prevent storing invalid empty months
+                        }
+
+                        $amountVal = ($amount !== null && $amount !== '') ? (float) $amount : 0.00;
+
+                        $keys = [
+                            'academic_session_id' => $sessionId,
+                            'class_setup_id'      => $classSetupId,
+                            'fee_category_id'     => $categoryId,
+                            'month_id'            => $monthId
+                        ];
+
+                        if ($amountVal > 0) {
+                            FeeSetup::updateOrCreate($keys, [
+                                'amount' => $amountVal,
+                                'status' => true
+                            ]);
+                        } else {
+                            FeeSetup::where($keys)->delete();
+                        }
                     }
                 }
             }
@@ -160,14 +195,13 @@ class FeeStructureController extends Controller
             Log::error('API FeeStructure Save Failed: ' . $e->getMessage());
             return response()->json([
                 'status' => false, 
-                'message' => 'তথ্য সংরক্ষণ করা সম্ভব হয়নি।'
+                'message' => $e->getMessage() ?: 'তথ্য সংরক্ষণ করা সম্ভব হয়নি।'
             ], 500);
         }
     }
 
     /**
      * Copy Previous Academic Session configuration structure cleanly.
-     * Accessible at: POST /api/fees/structure/copy
      */
     public function copyStructure(Request $request): JsonResponse
     {
@@ -186,34 +220,38 @@ class FeeStructureController extends Controller
             ], 422);
         }
 
+        $sourceSessionId = $request->source_session_id;
+        $targetSessionId = $request->target_session_id;
+        $classSetupId = $request->class_setup_id;
+
+        // BUG FIX: Check source existence outside the transaction to prevent uncommitted locks
+        $sourceSetups = FeeSetup::where('academic_session_id', $sourceSessionId)
+            ->where('class_setup_id', $classSetupId)
+            ->get();
+
+        if ($sourceSetups->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'নির্বাচিত উৎস শিক্ষাবর্ষে কোনো ফি কাঠামো পাওয়া যায়নি।'
+            ], 422);
+        }
+
         try {
             DB::beginTransaction();
 
-            $sourceSessionId = $request->source_session_id;
-            $targetSessionId = $request->target_session_id;
-            $classSetupId = $request->class_setup_id;
-
-            // Retrieve all matching configurations from the source session
-            $sourceSetups = FeeSetup::where('academic_session_id', $sourceSessionId)
+            // Clear old existing target setups to avoid duplicate overlaps
+            FeeSetup::where('academic_session_id', $targetSessionId)
                 ->where('class_setup_id', $classSetupId)
-                ->get();
-
-            if ($sourceSetups->isEmpty()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'নির্বাচিত উৎস শিক্ষাবর্ষে কোনো ফি কাঠামো পাওয়া যায়নি।'
-                ], 422);
-            }
+                ->delete();
 
             foreach ($sourceSetups as $setup) {
-                FeeSetup::updateOrCreate([
+                FeeSetup::create([
                     'academic_session_id' => $targetSessionId,
-                    'class_setup_id' => $classSetupId,
-                    'fee_category_id' => $setup->fee_category_id,
-                    'month_id' => $setup->month_id
-                ], [
-                    'amount' => $setup->amount,
-                    'status' => $setup->status
+                    'class_setup_id'      => $classSetupId,
+                    'fee_category_id'     => $setup->fee_category_id,
+                    'month_id'            => $setup->month_id, // NULL copies safely
+                    'amount'              => $setup->amount,
+                    'status'              => $setup->status
                 ]);
             }
 
@@ -233,5 +271,4 @@ class FeeStructureController extends Controller
             ], 500);
         }
     }
-
 }
