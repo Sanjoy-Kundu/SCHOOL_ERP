@@ -118,20 +118,20 @@
     <!-- Dynamic Main Yearly Matrix Table Wrapper -->
     <div id="matrixWrapper" class="card border-0 card-responsive p-3 p-sm-4 bg-white shadow-sm d-none">
 
-                <!-- School Information Branding Header Block (Responsive and Premium Layout) -->
+        <!-- School Information Branding Header Block (Responsive and Premium Layout) -->
         <div id="schoolHeaderBlock" class="d-flex align-items-center justify-content-center gap-3 border-bottom pb-4 mb-4 flex-column flex-sm-row text-center text-sm-start d-none">
             <div class="flex-shrink-0">
                 <img id="schoolLogo" src="" alt="School Logo" class="img-fluid rounded-circle border p-1 shadow-sm bg-light" style="width: 85px; height: 85px; object-fit: cover;">
             </div>
             <div class="flex-grow-1">
                 <h3 id="schoolNameBn" class="fw-bold mb-1 text-success" style="color: #004d40 !important; font-size: 1.5rem;"></h3>
-                <h6 id="schoolNameEn" class="text-secondary mb-2 fw-semibold text-uppercase tracking-wide" style="font-size: 0.95rem; opacity: 0.85;"></h6>
-                <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-sm-start text-muted small">
-                    <span><i class="fa-solid fa-hashtag me-1 text-success"></i>ইআইআইএন (EIIN): <strong id="schoolEiin" class="text-dark"></strong></span>
-                    <span><i class="fa-solid fa-barcode me-1 text-success"></i>স্কুল কোড: <strong id="schoolCode" class="text-dark"></strong></span>
-                    <span><i class="fa-solid fa-calendar-day me-1 text-success"></i>স্থাপিত: <strong id="schoolEst" class="text-dark"></strong></span>
+                <h3 id="schoolNameEn" class="text-black mb-2 fw-semibold text-uppercase tracking-wide" style="font-size: 0.95rem; opacity: 0.85;"></h3>
+                <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-sm-start text-black small">
+                    <span><i class="fa-solid fa-hashtag me-1 text-success"></i>ইআইআইএন (EIIN): <strong id="schoolEiin" class="text-black"></strong></span>
+                    <span><i class="fa-solid fa-barcode me-1 text-success"></i>স্কুল কোড: <strong id="schoolCode" class="text-black"></strong></span>
+                    <span><i class="fa-solid fa-calendar-day me-1 text-success"></i>স্থাপিত: <strong id="schoolEst" class="text-black"></strong></span>
                 </div>
-                <p id="schoolAddress" class="mb-0 text-muted small mt-1"></p>
+                <p id="schoolAddress" class="mb-0 text-black small mt-1"></p>
             </div>
         </div>
 
@@ -155,12 +155,15 @@
                 </table>
             </div>
 
-            <!-- Footer Save and Totals summaries -->
+            <!-- Footer Save, Reset and Totals summaries -->
             <div class="row mt-4 pt-3 border-top g-3 align-items-center">
                 <div class="col-12 col-md-6 text-start">
-                    <h5 class="fw-bold text-secondary mb-0">সর্বমোট বার্ষিক ফি (Grand Total): ৳ <span id="grandAnnualTotal" class="text-success fs-4 fw-bold">0.00</span></h5>
+                    <h5 class="fw-bold text-secondary mb-0">সর্বমোট বার্ষিক ফি (Grand Total): ৳ <span id="grandAnnualTotal" class="text-success fs-4 fw-bold">০.০০</span></h5>
                 </div>
-                <div class="col-12 col-md-6 text-end">
+                <div class="col-12 col-md-6 text-end d-flex justify-content-md-end justify-content-center gap-2 flex-wrap">
+                    <button type="button" id="resetStructureBtn" class="btn btn-outline-danger fw-bold px-3 py-2 rounded-3 shadow-sm">
+                        <i class="fa-solid fa-arrows-rotate me-2"></i>রিসেট করুন
+                    </button>
                     <button type="submit" id="saveStructureBtn" class="btn btn-success fw-bold px-4 py-2 rounded-3 shadow-sm" style="background-color: #004d40; border-color: #004d40;">
                         <i class="fa-solid fa-circle-check me-2"></i>ফি কাঠামো সংরক্ষণ করুন
                     </button>
@@ -314,6 +317,38 @@ $(document).ready(function() {
             $(this).val(0);
         }
         calculateMatrixTotals();
+    });
+
+    // Reset Page back to default initial state
+    $(document).on('click', '#resetStructureBtn', function() {
+        // Clear Filter values
+        $('#filterSessionId').val('');
+        $('#filterClassSetupId').val('');
+
+        // Toggle UI wrappers back to original empty state
+        $('#matrixWrapper').addClass('d-none');
+        $('#emptyStateMessage').removeClass('d-none');
+
+        // Clear dynamic elements safely
+        $('#matrixHeader').empty();
+        $('#matrixBody').empty();
+        $('#grandAnnualTotal').text('০.০০');
+
+        // Optional smooth scroll back to filters
+        $('html, body').animate({ scrollTop: 0 }, 'fast');
+
+        // Alert Confirmation Toast
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true
+        });
+        Toast.fire({
+            icon: 'info',
+            title: 'ফি কাঠামো রিসেট করা হয়েছে।'
+        });
     });
 
     // CRUD Load yearly fee matrix mapping configuration

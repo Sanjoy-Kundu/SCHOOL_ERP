@@ -14,11 +14,8 @@ use Illuminate\Validation\Rule;
 
 class FeeCategoryController extends Controller
 {
-/**
+ /**
      * Fetch and list all fee categories for the rendering view.
-     *
-     *
-     * @return JsonResponse
      */
     public function index(): JsonResponse
     {
@@ -44,22 +41,26 @@ class FeeCategoryController extends Controller
     /**
      * Store a newly created fee category.
      * Accessible at: POST /api/fees/categories/store
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|unique:fee_categories,name',
             'code' => 'nullable|string|max:50|unique:fee_categories,code',
+            'type' => [
+                'required', 
+                'string', 
+                Rule::in([FeeCategory::TYPE_MONTHLY, FeeCategory::TYPE_ONE_TIME, FeeCategory::TYPE_CUSTOM])
+            ],
             'description' => 'nullable|string|max:1000',
             'is_active' => 'nullable|boolean',
             'sort_order' => 'nullable|integer|min:0'
         ], [
             'name.required' => 'ফি ক্যাটাগরির নামটি অবশ্যই দিতে হবে।',
             'name.unique' => 'এই ফি ক্যাটাগরির নামটি ইতিমধ্যে ব্যবহার করা হয়েছে।',
-            'code.unique' => 'এই কোডটি ইতিমধ্যে ব্যবহার করা হয়েছে।'
+            'code.unique' => 'এই কোডটি ইতিমধ্যে ব্যবহার করা হয়েছে।',
+            'type.required' => 'ফি এর ধরণ (Type) নির্বাচন করা আবশ্যক।',
+            'type.in' => 'নির্বাচিত ফি এর ধরণটি সঠিক নয়।'
         ]);
 
         if ($validator->fails()) {
@@ -75,6 +76,7 @@ class FeeCategoryController extends Controller
             $category = FeeCategory::create([
                 'name' => $request->name,
                 'code' => $request->code,
+                'type' => $request->type, // Saved securely
                 'description' => $request->description,
                 'sort_order' => $request->input('sort_order', 0) ?? 0,
                 'is_active' => $request->boolean('is_active', true)
@@ -101,9 +103,6 @@ class FeeCategoryController extends Controller
     /**
      * Show specified Fee Category details.
      * Accessible at: GET /api/fees/categories/details/{id}
-     *
-     * @param int $id
-     * @return JsonResponse
      */
     public function show($id): JsonResponse
     {
@@ -126,10 +125,6 @@ class FeeCategoryController extends Controller
     /**
      * Update specified Fee Category securely with unique validation bypass.
      * Accessible at: POST /api/fees/categories/update/{id}
-     *
-     * @param Request $request
-     * @param int $id
-     * @return JsonResponse
      */
     public function update(Request $request, $id): JsonResponse
     {
@@ -149,13 +144,20 @@ class FeeCategoryController extends Controller
                     'max:50',
                     Rule::unique('fee_categories', 'code')->ignore($id)
                 ],
+                'type' => [
+                    'required', 
+                    'string', 
+                    Rule::in([FeeCategory::TYPE_MONTHLY, FeeCategory::TYPE_ONE_TIME, FeeCategory::TYPE_CUSTOM])
+                ],
                 'description' => 'nullable|string|max:1000',
                 'is_active' => 'nullable|boolean',
                 'sort_order' => 'nullable|integer|min:0'
             ], [
                 'name.required' => 'ফি ক্যাটাগরির নামটি অবশ্যই দিতে হবে।',
                 'name.unique' => 'এই ফি ক্যাটাগরির নামটি ইতিমধ্যে ব্যবহার করা হয়েছে।',
-                'code.unique' => 'এই কোডটি ইতিমধ্যে ব্যবহার করা হয়েছে।'
+                'code.unique' => 'এই কোডটি ইতিমধ্যে ব্যবহার করা হয়েছে।',
+                'type.required' => 'ফি এর ধরণ (Type) নির্বাচন করা আবশ্যক।',
+                'type.in' => ' can only be: monthly, one_time, custom'
             ]);
 
             if ($validator->fails()) {
@@ -170,6 +172,7 @@ class FeeCategoryController extends Controller
             $category->update([
                 'name' => $request->name,
                 'code' => $request->code,
+                'type' => $request->type, // Updated securely
                 'description' => $request->description,
                 'sort_order' => $request->input('sort_order', 0) ?? 0,
                 'is_active' => $request->boolean('is_active', $category->is_active)
@@ -195,9 +198,6 @@ class FeeCategoryController extends Controller
     /**
      * Toggle Active/Inactive status.
      * Accessible at: PATCH /api/fees/categories/{id}/toggle-status
-     *
-     * @param int $id
-     * @return JsonResponse
      */
     public function toggleStatus($id): JsonResponse
     {
@@ -230,9 +230,6 @@ class FeeCategoryController extends Controller
     /**
      * Delete specified Fee Category securely.
      * Accessible at: DELETE /api/fees/categories/delete/{id}
-     *
-     * @param int $id
-     * @return JsonResponse
      */
     public function destroy($id): JsonResponse
     {

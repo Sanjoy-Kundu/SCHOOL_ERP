@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('code')->nullable()->unique();
+             $table->string('type', 20)->default('monthly')->after('code');
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);

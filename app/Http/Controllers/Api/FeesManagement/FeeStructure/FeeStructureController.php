@@ -206,7 +206,6 @@ class FeeStructureController extends Controller
             }
 
             foreach ($sourceSetups as $setup) {
-                // Duplicate values cleanly into the target session using updateOrCreate to prevent unique duplicate crashes
                 FeeSetup::updateOrCreate([
                     'academic_session_id' => $targetSessionId,
                     'class_setup_id' => $classSetupId,

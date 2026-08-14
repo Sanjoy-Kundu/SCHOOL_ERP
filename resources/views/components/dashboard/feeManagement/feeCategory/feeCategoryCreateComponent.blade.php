@@ -65,6 +65,7 @@
                                 <th>সিরিয়াল নং</th>
                                 <th>ফি ক্যাটাগরির নাম</th>
                                 <th>শর্ট কোড (Code)</th>
+                                <th class="text-center">ফি এর ধরণ (Type)</th> <!-- Rendered Type column -->
                                 <th>বিবরণ (Description)</th>
                                 <th>অবস্থা</th>
                                 <!-- Hide Action header completely if user cannot edit/delete -->
@@ -75,7 +76,7 @@
                         </thead>
                         <tbody id="feeCategoriesTableBody">
                             <tr>
-                                <td colspan="{{ auth()->user()->canAny(['fee_categories.edit', 'fee_categories.delete']) ? 6 : 5 }}" class="text-center p-4">
+                                <td colspan="{{ auth()->user()->canAny(['fee_categories.edit', 'fee_categories.delete']) ? 7 : 6 }}" class="text-center p-4">
                                     <div class="spinner-border text-success" role="status"></div>
                                     <span class="ms-2">ফি ক্যাটাগরি তালিকা লোড হচ্ছে...</span>
                                 </td>
@@ -111,6 +112,17 @@
                             <label for="categoryCode" class="form-label fw-semibold small text-secondary">শর্ট কোড (Code)</label>
                             <input type="text" class="form-control form-control-lg rounded-3 fs-6 text-uppercase" id="categoryCode" placeholder="উদাঃ TUITION">
                             <div class="invalid-feedback" id="error-code"></div>
+                        </div>
+
+                        <!-- Category Type Selection (Required & Preserves existing structure) -->
+                        <div class="mb-3">
+                            <label for="categoryType" class="form-label fw-semibold small text-dark">ফি এর ধরণ (Type) <span class="text-danger">*</span></label>
+                            <select class="form-select form-select-lg rounded-3 fs-6" id="categoryType" required>
+                                <option value="{{ \App\Models\FeeCategory::TYPE_MONTHLY }}" selected>মাসিক ফি (Monthly)</option>
+                                <option value="{{ \App\Models\FeeCategory::TYPE_ONE_TIME }}">এককালীন ফি (One-Time)</option>
+                                <option value="{{ \App\Models\FeeCategory::TYPE_CUSTOM }}">কাস্টম/সাময়িক ফি (Custom)</option>
+                            </select>
+                            <div class="invalid-feedback" id="error-type"></div>
                         </div>
 
                         <!-- Description (Optional) -->
@@ -192,11 +204,22 @@ function renderCategories(categories) {
         const codeText = item.code ? `<span class="badge bg-light text-dark border px-2 py-1.5 fw-bold">${item.code}</span>` : '—';
         const descriptionText = item.description ? (item.description.length > 60 ? item.description.substring(0, 60) + '...' : item.description) : '—';
 
+        // Render type badge dynamically based on backend model string constants
+        let typeBadge = '';
+        if (item.type === 'one_time') {
+            typeBadge = '<span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1.5 rounded-pill fw-bold">এককালীন (One-time)</span>';
+        } else if (item.type === 'custom') {
+            typeBadge = '<span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-1.5 rounded-pill fw-bold">কাস্টম (Custom)</span>';
+        } else {
+            typeBadge = '<span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-1.5 rounded-pill fw-bold">মাসিক (Monthly)</span>';
+        }
+
         return `
             <tr>
                 <td class="fw-bold text-dark ps-3">${banglaSerial}</td>
                 <td class="fw-semibold text-dark">${item.name}</td>
                 <td class="text-center">${codeText}</td>
+                <td class="text-center">${typeBadge}</td> <!-- Type Column -->
                 <td class="text-muted small">${descriptionText}</td>
                 <td>
                     <span class="badge ${item.is_active ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'} px-3 py-2 rounded-pill fw-bold">
@@ -223,7 +246,7 @@ function initializeCategoriesDataTable() {
         responsive: true,
         order: [], // Preserves sorting order loaded from the controller
         columnDefs: [
-            { orderable: false, targets: (canEditCategory || canDeleteCategory) ? [0, 5] : [0] }
+            { orderable: false, targets: (canEditCategory || canDeleteCategory) ? [0, 6] : [0] } // targets column index updated for 7 columns
         ],
         language: {
             search: 'সহজ অনুসন্ধান:',
@@ -257,6 +280,7 @@ function resetFormState() {
     $('#editCategoryId').val('');
     $('#categoryName').val('').removeClass('is-invalid');
     $('#categoryCode').val('').removeClass('is-invalid');
+    $('#categoryType').val('monthly').removeClass('is-invalid'); // Type select reset to monthly
     $('#categoryDesc').val('').removeClass('is-invalid');
     $('#categorySort').val('0').removeClass('is-invalid');
     $('#status').prop('checked', true);
@@ -291,6 +315,7 @@ if (createFormElement) {
         const submitBtn = document.getElementById('submitBtn');
         const nameInput = document.getElementById('categoryName');
         const codeInput = document.getElementById('categoryCode');
+        const typeSelect = document.getElementById('categoryType');
         const descInput = document.getElementById('categoryDesc');
         const sortInput = document.getElementById('categorySort');
         const editId = document.getElementById('editCategoryId').value;
@@ -305,6 +330,7 @@ if (createFormElement) {
         const payload = {
             name: nameInput.value,
             code: codeInput.value || null,
+            type: typeSelect.value, // Added type select payload
             description: descInput.value || null,
             sort_order: sortInput.value || 0,
             is_active: document.getElementById('status').checked ? 1 : 0
@@ -343,6 +369,10 @@ if (createFormElement) {
                     if (errors.code) {
                         codeInput.classList.add('is-invalid');
                         document.getElementById('error-code').innerHTML = errors.code[0];
+                    }
+                    if (errors.type) {
+                        typeSelect.classList.add('is-invalid');
+                        document.getElementById('error-type').innerHTML = errors.type[0];
                     }
                     if (errors.description) {
                         descInput.classList.add('is-invalid');
@@ -401,6 +431,7 @@ $('#feeCategoriesTableBody').on('click', '.categoryEdit', async function(e) {
             $('#editCategoryId').val(category.id);
             $('#categoryName').val(category.name);
             $('#categoryCode').val(category.code ?? '');
+            $('#categoryType').val(category.type ?? 'monthly'); // Bind loaded type value safely
             $('#categoryDesc').val(category.description ?? '');
             $('#categorySort').val(category.sort_order ?? 0);
             $('#status').prop('checked', category.is_active == 1);
