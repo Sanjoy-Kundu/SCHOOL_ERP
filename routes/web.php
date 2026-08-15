@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\Academic\ReportPrintController;
 use App\Http\Controllers\Web\Academic\ShiftGroupController;
 use App\Http\Controllers\Web\Academic\SubjectAssignmentController;
 use App\Http\Controllers\Web\Academic\SubjectPapersController;
+use App\Http\Controllers\Web\Admission\AdmissionController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\ChangePasswordController;
 use App\Http\Controllers\Web\DashboardController;
@@ -136,6 +137,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/fees-categories', [FeeCategoryController::class, 'createFeesCategroy'])->name('fees-categories.create');
     Route::get('/fees-months', [MonthController::class, 'createMonth'])->name('fees-month.create');
     Route::get('/fees-structures', [FeeStructureController::class, 'createFeeStructure'])->name('fees-structures.create');
+
+
+
+    /**
+   * ----------------------------------------------------------
+   * STUDENT & ADMISSION PROCESSING
+   * ----------------------------------------------------------
+   */
+  // 1. Route to view the list of submitted online applications
+    Route::get('/students/online-applications', [AdmissionController::class, 'onlineApplicationsForm'])->name('students.online-applications');
+    
+    // // 2. Route for final admission form (containing the application search bar)
+    Route::get('/students/new-admission', [AdmissionController::class, 'newAdmissionForm'])->name('students.new-admission');
 
 
 });

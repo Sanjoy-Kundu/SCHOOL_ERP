@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\FeesManagement\FeeCategory\FeeCategoryController;
 use App\Http\Controllers\Api\FeesManagement\FeeCategory\Month\MonthController;
 use App\Http\Controllers\Api\FeesManagement\FeeStructure\FeeStructureController;
 use App\Http\Controllers\Api\ForgotPasswordController;
+use App\Http\Controllers\Api\Public\PublicPortalController;
 use App\Http\Controllers\Api\Settings\SchoolInformationController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,35 @@ Route::middleware('web')->group(function () {
     
     Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('api.password.email');
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('api.password.update');
+});
+
+
+/* --------------------------------------------------------------------------
+   PUBLIC ENDPOINTS (Unauthenticated - For Public Online Admission Portal)
+   -------------------------------------------------------------------------- */
+Route::prefix('public')->group(function () {
+    
+    // 1. Fetch public institute details 
+    Route::get('/institute-information', [PublicPortalController::class, 'instituteInformation'])
+        ->name('api.public.institute_information');
+
+    // 2. Fetch public class setups list 
+    Route::get('/class-setups', [PublicPortalController::class, 'classSetupLists'])
+        ->name('api.public.class_setups.index');
+
+    // 3. Fetch public academic session list 
+    Route::get('/academic-session', [PublicPortalController::class, 'academicSessionLists'])
+        ->name('api.academic_session.index');
+
+    // 3. Fetch public academic session list 
+    Route::get('/academic-month-lists', [PublicPortalController::class, 'monthLists'])
+        ->name('api.academic_month.index');
+
+    // 4. Fetch public academic session list 
+    Route::get('/academic-group-lists', [PublicPortalController::class, 'groupLists'])
+        ->name('api.academic_group.index');
+
+        
 });
 
 /* ----------------------------------------
